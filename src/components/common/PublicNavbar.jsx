@@ -134,7 +134,6 @@ function PublicNavbar() {
               )}
             </Box>
 
-            {/* Mobile Menu Button */}
             <IconButton
               onClick={() => setMobileOpen(true)}
               sx={{
@@ -151,8 +150,6 @@ function PublicNavbar() {
         </Container>
       </Box>
 
-      {/* Mobile Drawer */}
-      {/* Mobile Drawer */}
       <Drawer
         anchor="right"
         open={mobileOpen}
@@ -174,7 +171,6 @@ function PublicNavbar() {
             flexDirection: "column",
           }}
         >
-          {/* Drawer Header */}
           <Box
             sx={{
               p: 2.5,

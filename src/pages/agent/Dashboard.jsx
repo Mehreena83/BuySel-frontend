@@ -1,688 +1,3 @@
-// import { useEffect, useState } from "react";
-// import {
-//   Avatar,
-//   Box,
-//   Button,
-//   Card,
-//   CardContent,
-//   Container,
-//   Divider,
-//   Stack,
-//   Typography,
-// } from "@mui/material";
-// import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-// import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
-// import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
-// import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
-// import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-// import { Link } from "react-router-dom";
-// import axiosInstance from "../../api/axiosInstance";
-
-// function Dashboard() {
-//   const user = JSON.parse(localStorage.getItem("user"));
-
-//   const [subscription, setSubscription] = useState(null);
-//   const [subscriptionLoading, setSubscriptionLoading] = useState(true);
-//   const [recentProperties, setRecentProperties] = useState([]);
-//   const [propertiesLoading, setPropertiesLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchSubscription = async () => {
-//       try {
-//         const response = await axiosInstance.get("/plans/my-subscription/");
-//         setSubscription(response.data);
-//       } catch (err) {
-//         console.log(err.response?.data);
-//       } finally {
-//         setSubscriptionLoading(false);
-//       }
-//     };
-
-//     const fetchRecentProperties = async () => {
-//       try {
-//         const response = await axiosInstance.get("/properties/my-properties/");
-//         setRecentProperties(response.data.slice(0, 3));
-//       } catch (err) {
-//         console.log(err.response?.data);
-//       } finally {
-//         setPropertiesLoading(false);
-//       }
-//     };
-
-//     fetchSubscription();
-//     fetchRecentProperties();
-//   }, []);
-
-//   const currentPlan =
-//     subscription?.plan_name || subscription?.current_plan || "No Active Plan";
-
-//   const propertyUsed = subscription?.property_used ?? 0;
-//   const remainingLimit = subscription?.remaining_limit ?? 0;
-//   const hasActivePlan = currentPlan !== "No Active Plan";
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("token");
-//     localStorage.removeItem("user");
-//     window.location.href = "/login";
-//   };
-
-//   const statCards = [
-//     {
-//       title: "Current Plan",
-//       value: subscriptionLoading ? "Loading..." : currentPlan,
-//       subtitle: hasActivePlan
-//         ? `Valid until ${subscription?.end_date || "N/A"}`
-//         : "Choose a plan to start listing",
-//       icon: <WorkspacePremiumOutlinedIcon />,
-//     },
-//     {
-//       title: "Properties Added",
-//       value: subscriptionLoading ? "Loading..." : propertyUsed,
-//       subtitle: "Total submitted properties",
-//       icon: <HomeWorkOutlinedIcon />,
-//     },
-//     {
-//       title: "Remaining Limit",
-//       value: subscriptionLoading ? "Loading..." : remainingLimit,
-//       subtitle: hasActivePlan
-//         ? "Available listing limit"
-//         : "Available after plan activation",
-//       icon: <AddHomeOutlinedIcon />,
-//     },
-//   ];
-
-//   const navButtonStyle = {
-//     justifyContent: "flex-start",
-//     color: "#667085",
-//     py: 1.2,
-//     px: 1.5,
-//     borderRadius: 2,
-//     fontWeight: 600,
-//     textTransform: "none",
-//     "&:hover": {
-//       bgcolor: "#f1f5f9",
-//       color: "#1f2937",
-//     },
-//   };
-
-//   return (
-//     <Box sx={{ minHeight: "100vh", bgcolor: "#f8fafc", display: "flex" }}>
-//       <Box
-//         sx={{
-//           width: 250,
-//           bgcolor: "#ffffff",
-//           borderRight: "1px solid #e5e7eb",
-//           minHeight: "100vh",
-//           p: 3,
-//           display: { xs: "none", md: "block" },
-//         }}
-//       >
-//         <Typography variant="h5" fontWeight={800} color="#1f2937">
-//           Buy<span style={{ color: "#059669" }}>Sel</span>
-//         </Typography>
-
-//         <Stack spacing={1.1} sx={{ mt: 5 }}>
-//           <Button
-//             component={Link}
-//             to="/"
-//             variant="outlined"
-//             sx={{
-//               textTransform: "none",
-//               fontWeight: 700,
-//               borderRadius: 2,
-//               color: "#047857",
-//               borderColor: "#bbf7d0",
-//             }}
-//           >
-//             Home
-//           </Button>
-//           <Button
-//             startIcon={<DashboardOutlinedIcon />}
-//             sx={{
-//               ...navButtonStyle,
-//               bgcolor: "#ecfdf5",
-//               color: "#047857",
-//               fontWeight: 700,
-//               "&:hover": { bgcolor: "#d1fae5", color: "#047857" },
-//             }}
-//           >
-//             Dashboard
-//           </Button>
-
-//           <Button component={Link} to="/my-properties" sx={navButtonStyle}>
-//             My Properties
-//           </Button>
-
-//           <Button
-//             component={Link}
-//             to="/add-property"
-//             disabled={!hasActivePlan}
-//             sx={navButtonStyle}
-//           >
-//             Add Property
-//           </Button>
-
-//           <Button component={Link} to="/plans" sx={navButtonStyle}>
-//             Plans
-//           </Button>
-
-//           <Button component={Link} to="/my-inquiries" sx={navButtonStyle}>
-//             Inquiries
-//           </Button>
-//         </Stack>
-//       </Box>
-
-//       <Box sx={{ flex: 1, minWidth: 0 }}>
-//         <Box
-//           sx={{
-//             minHeight: 76,
-//             bgcolor: "#ffffff",
-//             borderBottom: "1px solid #e5e7eb",
-//             px: { xs: 2, sm: 3, md: 5 },
-//             py: { xs: 1.5, sm: 0 },
-//             display: "flex",
-//             alignItems: "center",
-//             justifyContent: "space-between",
-//             gap: 2,
-//           }}
-//         >
-//           <Box sx={{ minWidth: 0 }}>
-//             <Typography variant="h5" fontWeight={750} color="#1f2937">
-//               Dashboard
-//             </Typography>
-
-//             <Typography variant="body2" color="#667085">
-//               Welcome back, {user?.username || "Agent"}
-//             </Typography>
-//           </Box>
-
-//           <Stack direction="row" spacing={1.5} alignItems="center">
-//             <Avatar sx={{ bgcolor: "#065f46", fontWeight: 700 }}>
-//               {user?.username?.charAt(0).toUpperCase() || "A"}
-//             </Avatar>
-
-//             <Button
-//               variant="outlined"
-//               color="error"
-//               startIcon={<LogoutOutlinedIcon />}
-//               onClick={handleLogout}
-//               sx={{
-//                 borderRadius: 2,
-//                 textTransform: "none",
-//                 fontWeight: 700,
-//                 display: { xs: "none", sm: "inline-flex" },
-//               }}
-//             >
-//               Logout
-//             </Button>
-//           </Stack>
-//         </Box>
-
-//         <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
-//           <Card
-//             elevation={0}
-//             sx={{
-//               border: "1px solid #bbf7d0",
-//               borderRadius: 3,
-//               mb: 3,
-//               bgcolor: "#ecfdf5",
-//             }}
-//           >
-//             <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-//               <Box
-//                 sx={{
-//                   display: "flex",
-//                   flexDirection: { xs: "column", md: "row" },
-//                   alignItems: { xs: "flex-start", md: "center" },
-//                   justifyContent: "space-between",
-//                   gap: 2.5,
-//                   width: "100%",
-//                 }}
-//               >
-//                 <Box sx={{ flex: 1 }}>
-//                   <Typography
-//                     variant="h4"
-//                     fontWeight={700}
-//                     color="#14532d"
-//                     sx={{ fontSize: { xs: 24, md: 30 } }}
-//                   >
-//                     Manage Your Listings
-//                   </Typography>
-
-//                   <Typography sx={{ mt: 1, color: "#047857" }}>
-//                     Track your plan, properties, and listing limit in one place.
-//                   </Typography>
-//                 </Box>
-
-//                 <Button
-//                   component={Link}
-//                   to="/plans"
-//                   variant="contained"
-//                   sx={{
-//                     bgcolor: "#065f46",
-//                     color: "#fff",
-//                     fontWeight: 700,
-//                     px: 2.8,
-//                     py: 1,
-//                     borderRadius: 2,
-//                     textTransform: "none",
-//                     boxShadow: "none",
-//                     flexShrink: 0,
-//                     "&:hover": {
-//                       bgcolor: "#047857",
-//                       boxShadow: "none",
-//                     },
-//                   }}
-//                 >
-//                   {hasActivePlan ? "Change Plan" : "Choose Plan"}
-//                 </Button>
-//               </Box>
-//             </CardContent>
-//           </Card>
-//           <Card
-//             elevation={0}
-//             sx={{
-//               display: { xs: "block", md: "none" },
-//               border: "1px solid #e5e7eb",
-//               borderRadius: 3,
-//               mb: 3,
-//               bgcolor: "#ffffff",
-//             }}
-//           >
-//             <CardContent sx={{ p: 2 }}>
-//               <Typography fontWeight={800} color="#1f2937" sx={{ mb: 1.5 }}>
-//                 Agent Menu
-//               </Typography>
-
-//               <Box
-//                 sx={{
-//                   display: "grid",
-//                   gridTemplateColumns: "1fr 1fr",
-//                   gap: 1.2,
-//                 }}
-//               >
-//                 <Button
-//                   component={Link}
-//                   to="/my-properties"
-//                   variant="outlined"
-//                   sx={{
-//                     textTransform: "none",
-//                     fontWeight: 700,
-//                     borderRadius: 2,
-//                     color: "#047857",
-//                     borderColor: "#bbf7d0",
-//                   }}
-//                 >
-//                   My Properties
-//                 </Button>
-
-//                 <Button
-//                   component={Link}
-//                   to="/add-property"
-//                   variant="outlined"
-//                   disabled={!hasActivePlan}
-//                   sx={{
-//                     textTransform: "none",
-//                     fontWeight: 700,
-//                     borderRadius: 2,
-//                     color: "#047857",
-//                     borderColor: "#bbf7d0",
-//                   }}
-//                 >
-//                   Add Property
-//                 </Button>
-
-//                 <Button
-//                   component={Link}
-//                   to="/plans"
-//                   variant="outlined"
-//                   sx={{
-//                     textTransform: "none",
-//                     fontWeight: 700,
-//                     borderRadius: 2,
-//                     color: "#047857",
-//                     borderColor: "#bbf7d0",
-//                   }}
-//                 >
-//                   Plans
-//                 </Button>
-
-//                 <Button
-//                   component={Link}
-//                   to="/my-inquiries"
-//                   variant="outlined"
-//                   sx={{
-//                     textTransform: "none",
-//                     fontWeight: 700,
-//                     borderRadius: 2,
-//                     color: "#047857",
-//                     borderColor: "#bbf7d0",
-//                   }}
-//                 >
-//                   Inquiries
-//                 </Button>
-//               </Box>
-//             </CardContent>
-//           </Card>
-
-//           <Box
-//             sx={{
-//               display: "grid",
-//               gridTemplateColumns: {
-//                 xs: "1fr",
-//                 sm: "1fr 1fr",
-//                 lg: "repeat(3, 1fr)",
-//               },
-//               gap: 2.5,
-//             }}
-//           >
-//             {statCards.map((card) => (
-//               <Card
-//                 key={card.title}
-//                 elevation={0}
-//                 sx={{
-//                   border: "1px solid #e5e7eb",
-//                   borderRadius: 3,
-//                   bgcolor: "white",
-//                 }}
-//               >
-//                 <CardContent sx={{ p: 2.8 }}>
-//                   <Box
-//                     sx={{
-//                       width: 44,
-//                       height: 44,
-//                       borderRadius: 2,
-//                       bgcolor: "#f0fdf4",
-//                       color: "#059669",
-//                       display: "flex",
-//                       alignItems: "center",
-//                       justifyContent: "center",
-//                       mb: 2,
-//                     }}
-//                   >
-//                     {card.icon}
-//                   </Box>
-
-//                   <Typography color="#667085" fontSize={14} fontWeight={600}>
-//                     {card.title}
-//                   </Typography>
-
-//                   <Typography
-//                     variant="h5"
-//                     fontWeight={700}
-//                     color="#27364a"
-//                     sx={{ mt: 0.8 }}
-//                   >
-//                     {card.value}
-//                   </Typography>
-
-//                   <Typography color="#667085" fontSize={13} sx={{ mt: 1 }}>
-//                     {card.subtitle}
-//                   </Typography>
-//                 </CardContent>
-//               </Card>
-//             ))}
-//           </Box>
-
-//           <Box
-//             sx={{
-//               display: "grid",
-//               gridTemplateColumns: { xs: "1fr", lg: "2fr 1fr" },
-//               gap: 2.5,
-//               mt: 2.5,
-//             }}
-//           >
-//             <Card
-//               elevation={0}
-//               sx={{
-//                 border: "1px solid #e5e7eb",
-//                 borderRadius: 4,
-//                 bgcolor: "#fff",
-//               }}
-//             >
-//               <CardContent sx={{ p: 3 }}>
-//                 <Box
-//                   sx={{
-//                     display: "flex",
-//                     alignItems: "center",
-//                     justifyContent: "space-between",
-//                     width: "100%",
-//                   }}
-//                 >
-//                   <Typography variant="h6" fontWeight={750} color="#1f2937">
-//                     Recent Properties
-//                   </Typography>
-
-//                   <Button
-//                     component={Link}
-//                     to="/my-properties"
-//                     variant="outlined"
-//                     size="small"
-//                     sx={{
-//                       ml: "auto",
-//                       textTransform: "none",
-//                       fontWeight: 700,
-//                       color: "#047857",
-//                       bgcolor: "#ecfdf5",
-//                       borderColor: "#bbf7d0",
-//                       borderRadius: 2,
-//                       px: 1.8,
-//                       py: 0.7,
-//                       "&:hover": {
-//                         bgcolor: "#d1fae5",
-//                         borderColor: "#86efac",
-//                       },
-//                     }}
-//                   >
-//                     View All
-//                   </Button>
-//                 </Box>
-//                 <Divider sx={{ my: 2 }} />
-
-//                 {/* <Box
-//                   sx={{
-//                     py: { xs: 4.5, md: 5.5 },
-//                     px: 2,
-//                     textAlign: "center",
-//                     bgcolor: "#f8fafc",
-//                     borderRadius: 3,
-//                     border: "1px dashed #cbd5e1",
-//                   }}
-//                 >
-//                   <Typography fontWeight={700} color="#475467">
-//                     No properties found
-//                   </Typography>
-
-//                   <Typography variant="body2" color="#667085" sx={{ mt: 0.5 }}>
-//                     Your added properties will appear here.
-//                   </Typography>
-//                 </Box> */}
-//                 {propertiesLoading ? (
-//                   <Box
-//                     sx={{
-//                       py: 5,
-//                       textAlign: "center",
-//                       bgcolor: "#f8fafc",
-//                       borderRadius: 3,
-//                       border: "1px dashed #cbd5e1",
-//                     }}
-//                   >
-//                     <Typography fontWeight={700} color="#667085">
-//                       Loading properties...
-//                     </Typography>
-//                   </Box>
-//                 ) : recentProperties.length === 0 ? (
-//                   <Box
-//                     sx={{
-//                       py: { xs: 4.5, md: 5.5 },
-//                       px: 2,
-//                       textAlign: "center",
-//                       bgcolor: "#f8fafc",
-//                       borderRadius: 3,
-//                       border: "1px dashed #cbd5e1",
-//                     }}
-//                   >
-//                     <Typography fontWeight={700} color="#475467">
-//                       No properties found
-//                     </Typography>
-
-//                     <Typography
-//                       variant="body2"
-//                       color="#667085"
-//                       sx={{ mt: 0.5 }}
-//                     >
-//                       Your added properties will appear here.
-//                     </Typography>
-//                   </Box>
-//                 ) : (
-//                   <Stack spacing={1.5}>
-//                     {recentProperties.map((property) => (
-//                       <Box
-//                         key={property.id}
-//                         sx={{
-//                           p: 2,
-//                           border: "1px solid #e5e7eb",
-//                           borderRadius: 3,
-//                           bgcolor: "#f8fafc",
-//                           display: "flex",
-//                           justifyContent: "space-between",
-//                           alignItems: { xs: "flex-start", sm: "center" },
-//                           gap: 2,
-//                           flexDirection: { xs: "column", sm: "row" },
-//                         }}
-//                       >
-//                         <Box>
-//                           <Typography fontWeight={800} color="#1f2937">
-//                             {property.title}
-//                           </Typography>
-
-//                           <Typography
-//                             variant="body2"
-//                             color="#667085"
-//                             sx={{ mt: 0.4 }}
-//                           >
-//                             {property.location} • ₹
-//                             {Number(property.price).toLocaleString("en-IN")}
-//                           </Typography>
-//                         </Box>
-
-//                         <Box
-//                           sx={{
-//                             px: 1.4,
-//                             py: 0.5,
-//                             borderRadius: 999,
-//                             bgcolor:
-//                               property.status === "approved"
-//                                 ? "#dcfce7"
-//                                 : property.status === "rejected"
-//                                   ? "#fee2e2"
-//                                   : "#fef3c7",
-//                             color:
-//                               property.status === "approved"
-//                                 ? "#166534"
-//                                 : property.status === "rejected"
-//                                   ? "#991b1b"
-//                                   : "#92400e",
-//                             fontSize: 12,
-//                             fontWeight: 800,
-//                             textTransform: "capitalize",
-//                           }}
-//                         >
-//                           {property.is_expired ? "Expired" : property.status}
-//                         </Box>
-//                       </Box>
-//                     ))}
-//                   </Stack>
-//                 )}
-//               </CardContent>
-//             </Card>
-
-//             <Card
-//               elevation={0}
-//               sx={{
-//                 border: "1px solid #e5e7eb",
-//                 borderRadius: 4,
-//                 bgcolor: "#fff",
-//               }}
-//             >
-//               <CardContent sx={{ p: 3 }}>
-//                 <Typography variant="h6" fontWeight={750} color="#1f2937">
-//                   Quick Actions
-//                 </Typography>
-
-//                 <Stack spacing={1.5} sx={{ mt: 3 }}>
-//                   <Button
-//                     component={Link}
-//                     to="/plans"
-//                     variant="contained"
-//                     fullWidth
-//                     sx={{
-//                       py: 1.2,
-//                       bgcolor: "#065f46",
-//                       borderRadius: 2,
-//                       fontWeight: 700,
-//                       textTransform: "none",
-//                       boxShadow: "none",
-//                       "&:hover": {
-//                         bgcolor: "#047857",
-//                         boxShadow: "none",
-//                       },
-//                     }}
-//                   >
-//                     View Plans
-//                   </Button>
-
-//                   <Button
-//                     component={Link}
-//                     to="/add-property"
-//                     variant="outlined"
-//                     disabled={!hasActivePlan}
-//                     fullWidth
-//                     sx={{
-//                       py: 1.2,
-//                       borderRadius: 2,
-//                       fontWeight: 700,
-//                       textTransform: "none",
-//                       borderColor: "#cbd5e1",
-//                       color: "#344054",
-//                       "&:hover": {
-//                         borderColor: "#059669",
-//                         bgcolor: "#ecfdf5",
-//                       },
-//                     }}
-//                   >
-//                     Add Property
-//                   </Button>
-
-//                   <Button
-//                     variant="outlined"
-//                     color="error"
-//                     startIcon={<LogoutOutlinedIcon />}
-//                     onClick={handleLogout}
-//                     fullWidth
-//                     sx={{
-//                       py: 1.2,
-//                       borderRadius: 2,
-//                       fontWeight: 700,
-//                       textTransform: "none",
-//                       display: { xs: "flex", sm: "none" },
-//                     }}
-//                   >
-//                     Logout
-//                   </Button>
-//                 </Stack>
-//               </CardContent>
-//             </Card>
-//           </Box>
-//         </Container>
-//       </Box>
-//     </Box>
-//   );
-// }
-
-// export default Dashboard;
-
-
 import { useEffect, useState } from "react";
 import {
   Avatar,
@@ -853,7 +168,12 @@ function Dashboard() {
         </Typography>
 
         <Stack spacing={0.8} sx={{ mt: 4 }}>
-          <Button component={Link} to="/" variant="outlined" sx={menuOutlineStyle}>
+          <Button
+            component={Link}
+            to="/"
+            variant="outlined"
+            sx={menuOutlineStyle}
+          >
             Home
           </Button>
 
@@ -1041,7 +361,12 @@ function Dashboard() {
                   gap: 1.2,
                 }}
               >
-                <Button component={Link} to="/my-properties" variant="outlined" sx={menuOutlineStyle}>
+                <Button
+                  component={Link}
+                  to="/my-properties"
+                  variant="outlined"
+                  sx={menuOutlineStyle}
+                >
                   My Properties
                 </Button>
 
@@ -1055,11 +380,21 @@ function Dashboard() {
                   Add Property
                 </Button>
 
-                <Button component={Link} to="/plans" variant="outlined" sx={menuOutlineStyle}>
+                <Button
+                  component={Link}
+                  to="/plans"
+                  variant="outlined"
+                  sx={menuOutlineStyle}
+                >
                   Plans
                 </Button>
 
-                <Button component={Link} to="/my-inquiries" variant="outlined" sx={menuOutlineStyle}>
+                <Button
+                  component={Link}
+                  to="/my-inquiries"
+                  variant="outlined"
+                  sx={menuOutlineStyle}
+                >
                   Inquiries
                 </Button>
               </Box>
@@ -1109,7 +444,9 @@ function Dashboard() {
                     {card.icon}
                   </Box>
 
-                  <Typography sx={{ color: "#667085", fontSize: 14, fontWeight: 500 }}>
+                  <Typography
+                    sx={{ color: "#667085", fontSize: 14, fontWeight: 500 }}
+                  >
                     {card.title}
                   </Typography>
 
@@ -1157,7 +494,9 @@ function Dashboard() {
                     gap: 2,
                   }}
                 >
-                  <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#1f2937" }}>
+                  <Typography
+                    sx={{ fontSize: 18, fontWeight: 700, color: "#1f2937" }}
+                  >
                     Recent Properties
                   </Typography>
 
@@ -1215,11 +554,15 @@ function Dashboard() {
                           }}
                         >
                           <Box sx={{ minWidth: 0 }}>
-                            <Typography sx={{ fontWeight: 600, color: "#1f2937" }}>
+                            <Typography
+                              sx={{ fontWeight: 600, color: "#1f2937" }}
+                            >
                               {property.title}
                             </Typography>
 
-                            <Typography sx={{ color: "#667085", fontSize: 14, mt: 0.4 }}>
+                            <Typography
+                              sx={{ color: "#667085", fontSize: 14, mt: 0.4 }}
+                            >
                               {property.location} • ₹
                               {Number(property.price).toLocaleString("en-IN")}
                             </Typography>
@@ -1257,7 +600,9 @@ function Dashboard() {
               }}
             >
               <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-                <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#1f2937" }}>
+                <Typography
+                  sx={{ fontSize: 18, fontWeight: 700, color: "#1f2937" }}
+                >
                   Quick Actions
                 </Typography>
 

@@ -310,26 +310,26 @@ function MyProperties() {
 
                         <Stack direction="row" spacing={1}>
                           {!property.edit_locked && !property.is_expired && (
-                          <Button
-                            component={Link}
-                            to={`/edit-property/${property.id}`}
-                            variant="outlined"
-                            size="small"
-                            startIcon={<EditOutlinedIcon />}
-                            sx={{
-                              borderRadius: 2,
-                              textTransform: "none",
-                              fontWeight: 700,
-                              color: "#047857",
-                              borderColor: "#bbf7d0",
-                              "&:hover": {
-                                borderColor: "#059669",
-                                bgcolor: "#ecfdf5",
-                              },
-                            }}
-                          >
-                            Edit
-                          </Button> 
+                            <Button
+                              component={Link}
+                              to={`/edit-property/${property.id}`}
+                              variant="outlined"
+                              size="small"
+                              startIcon={<EditOutlinedIcon />}
+                              sx={{
+                                borderRadius: 2,
+                                textTransform: "none",
+                                fontWeight: 700,
+                                color: "#047857",
+                                borderColor: "#bbf7d0",
+                                "&:hover": {
+                                  borderColor: "#059669",
+                                  bgcolor: "#ecfdf5",
+                                },
+                              }}
+                            >
+                              Edit
+                            </Button>
                           )}
 
                           <Button

@@ -12,13 +12,11 @@ import AddProperty from "./pages/agent/AddProperty";
 import MyProperties from "./pages/agent/MyProperties";
 import MyInquiries from "./pages/agent/MyInquiries";
 import EditProperty from "./pages/agent/EditProperty";
-import ProtectedRoute from "./routes/ProtectedRoute";
 import AgentRoute from "./routes/AgentRoute";
 
 function App() {
   return (
     <Routes>
-      {/* Public pages - Navbar/Footer varum */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/buy" element={<Buy />} />
@@ -28,60 +26,59 @@ function App() {
         <Route path="/register" element={<Register />} />
       </Route>
 
-      {/* Agent pages - Public Navbar/Footer venda */}
-<Route
-  path="/dashboard"
-  element={
-    <AgentRoute>
-      <Dashboard />
-    </AgentRoute>
-  }
-/>
+      <Route
+        path="/dashboard"
+        element={
+          <AgentRoute>
+            <Dashboard />
+          </AgentRoute>
+        }
+      />
 
-<Route
-  path="/plans"
-  element={
-    <AgentRoute>
-      <Plans />
-    </AgentRoute>
-  }
-/>
+      <Route
+        path="/plans"
+        element={
+          <AgentRoute>
+            <Plans />
+          </AgentRoute>
+        }
+      />
 
-<Route
-  path="/add-property"
-  element={
-    <AgentRoute>
-      <AddProperty />
-    </AgentRoute>
-  }
-/>
+      <Route
+        path="/add-property"
+        element={
+          <AgentRoute>
+            <AddProperty />
+          </AgentRoute>
+        }
+      />
 
-<Route
-  path="/my-properties"
-  element={
-    <AgentRoute>
-      <MyProperties />
-    </AgentRoute>
-  }
-/>
+      <Route
+        path="/my-properties"
+        element={
+          <AgentRoute>
+            <MyProperties />
+          </AgentRoute>
+        }
+      />
 
-<Route
-  path="/edit-property/:id"
-  element={
-    <AgentRoute>
-      <EditProperty />
-    </AgentRoute>
-  }
-/>
+      <Route
+        path="/edit-property/:id"
+        element={
+          <AgentRoute>
+            <EditProperty />
+          </AgentRoute>
+        }
+      />
 
-<Route
-  path="/my-inquiries"
-  element={
-    <AgentRoute>
-      <MyInquiries />
-    </AgentRoute>
-  }
-/>
+      <Route
+        path="/my-inquiries"
+        element={
+          <AgentRoute>
+            <MyInquiries />
+          </AgentRoute>
+        }
+      />
     </Routes>
   );
 }
