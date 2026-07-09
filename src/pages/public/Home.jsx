@@ -20,6 +20,17 @@ import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import axiosInstance from "../../api/axiosInstance";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
+
+const getImageUrl = (image) => {
+  if (!image) return "";
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `${API_BASE_URL}${image}`;
+};
 
 function Home() {
   const [properties, setProperties] = useState([]);
@@ -497,7 +508,7 @@ function Home() {
                 {property.main_image ? (
                   <CardMedia
                     component="img"
-                    image={property.main_image}
+                    image={getImageUrl(property.main_image)}
                     alt={property.title}
                     sx={{
                       height: 220,
