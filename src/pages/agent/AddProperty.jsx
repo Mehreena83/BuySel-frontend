@@ -55,6 +55,7 @@ function AddProperty() {
     bathrooms: "",
     area_sqft: "",
     main_image: null,
+    gallery_images: [],
   });
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -63,15 +64,31 @@ function AddProperty() {
   });
   const [submitLoading, setSubmitLoading] = useState(false);
 
+  // const handleChange = (e) => {
+  //   const { name, value, files } = e.target;
+
+  //   setFormData({
+  //     ...formData,
+  //     [name]: files ? files[0] : value,
+  //   });
+  // };
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
+    if (name === "gallery_images") {
+      setFormData({
+        ...formData,
+        gallery_images: Array.from(files),
+      });
+      return;
+    }
 
     setFormData({
       ...formData,
       [name]: files ? files[0] : value,
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -80,7 +97,11 @@ function AddProperty() {
     const data = new FormData();
 
     Object.keys(formData).forEach((key) => {
-      if (formData[key] !== "" && formData[key] !== null) {
+      if (key === "gallery_images") {
+        formData.gallery_images.forEach((image) => {
+          data.append("gallery_images", image);
+        });
+      } else if (formData[key] !== "" && formData[key] !== null) {
         data.append(key, formData[key]);
       }
     });
@@ -424,6 +445,70 @@ function AddProperty() {
                         </Typography>
                       )}
                     </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      mt: 2,
+                      border: "1px dashed #bfdbfe",
+                      borderRadius: 3,
+                      bgcolor: "#eff6ff",
+                      p: 2.5,
+                      textAlign: "center",
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      component="label"
+                      startIcon={<CloudUploadOutlinedIcon />}
+                      sx={{
+                        py: 1.1,
+                        px: 3,
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontWeight: 700,
+                        color: "#1d4ed8",
+                        borderColor: "#bfdbfe",
+                        bgcolor: "#ffffff",
+                        "&:hover": {
+                          bgcolor: "#dbeafe",
+                          borderColor: "#93c5fd",
+                        },
+                      }}
+                    >
+                      Upload Gallery Images
+                      <input
+                        type="file"
+                        name="gallery_images"
+                        hidden
+                        multiple
+                        accept="image/*"
+                        onChange={handleChange}
+                      />
+                    </Button>
+
+                    <Typography color="#667085" fontSize={13} sx={{ mt: 1.2 }}>
+                      You can select multiple property images
+                    </Typography>
+
+                    {formData.gallery_images.length > 0 && (
+                      <Stack spacing={0.7} sx={{ mt: 1.5 }}>
+                        {formData.gallery_images.map((file, index) => (
+                          <Typography
+                            key={index}
+                            color="#344054"
+                            fontSize={14}
+                            fontWeight={700}
+                            sx={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {index + 1}. {file.name}
+                          </Typography>
+                        ))}
+                      </Stack>
+                    )}
                   </Box>
 
                   <Box
