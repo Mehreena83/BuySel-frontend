@@ -54,7 +54,7 @@ function AddProperty() {
     bedrooms: "",
     bathrooms: "",
     area_sqft: "",
-property_images: [],
+property_images: [null],
   });
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -63,14 +63,18 @@ property_images: [],
   });
   const [submitLoading, setSubmitLoading] = useState(false);
 
-const handleChange = (e) => {
+ const handleChange = (e, index = null) => {
   const { name, value, files } = e.target;
 
   if (name === "property_images") {
+    const updatedImages = [...formData.property_images];
+    updatedImages[index] = files[0];
+
     setFormData({
       ...formData,
-      property_images: Array.from(files),
+      property_images: updatedImages,
     });
+
     return;
   }
 
@@ -80,6 +84,21 @@ const handleChange = (e) => {
   });
 };
 
+const addImageField = () => {
+  setFormData({
+    ...formData,
+    property_images: [...formData.property_images, null],
+  });
+};
+
+const removeImageField = (index) => {
+  const updatedImages = formData.property_images.filter((_, i) => i !== index);
+
+  setFormData({
+    ...formData,
+    property_images: updatedImages.length > 0 ? updatedImages : [null],
+  });
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,16 +107,18 @@ const handleChange = (e) => {
 
     const data = new FormData();
 
-Object.keys(formData).forEach((key) => {
-  if (key !== "property_images" && formData[key] !== "") {
-    data.append(key, formData[key]);
-  }
-});
+    Object.keys(formData).forEach((key) => {
+      if (key !== "property_images" && formData[key] !== "") {
+        data.append(key, formData[key]);
+      }
+    });
 
-if (formData.property_images.length > 0) {
-  data.append("main_image", formData.property_images[0]);
+const selectedImages = formData.property_images.filter((image) => image);
 
-  formData.property_images.slice(1).forEach((image) => {
+if (selectedImages.length > 0) {
+  data.append("main_image", selectedImages[0]);
+
+  selectedImages.slice(1).forEach((image) => {
     data.append("gallery_images", image);
   });
 }
@@ -375,8 +396,9 @@ if (formData.property_images.length > 0) {
 
                   <Divider />
 
+
                   {/* <Box>
-                    <SectionTitle>Property Image</SectionTitle>
+                    <SectionTitle>Property Images</SectionTitle>
 
                     <Box
                       sx={{
@@ -406,11 +428,12 @@ if (formData.property_images.length > 0) {
                           },
                         }}
                       >
-                        Upload Main Image
+                        Upload Property Images
                         <input
                           type="file"
-                          name="main_image"
+                          name="property_images"
                           hidden
+                          multiple
                           accept="image/*"
                           onChange={handleChange}
                         />
@@ -421,91 +444,36 @@ if (formData.property_images.length > 0) {
                         fontSize={13}
                         sx={{ mt: 1.2 }}
                       >
-                        PNG, JPG or JPEG image supported
+                        Select multiple images. First selected image will be the
+                        main image.
                       </Typography>
 
-                      {formData.main_image && (
-                        <Typography
-                          color="#344054"
-                          fontSize={14}
-                          fontWeight={700}
-                          sx={{
-                            mt: 1,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Selected: {formData.main_image.name}
-                        </Typography>
+                      {formData.property_images.length > 0 && (
+                        <Stack spacing={0.7} sx={{ mt: 1.5 }}>
+                          {formData.property_images.map((file, index) => (
+                            <Typography
+                              key={index}
+                              color="#344054"
+                              fontSize={14}
+                              fontWeight={700}
+                              sx={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {index + 1}. {file.name}
+                              {index === 0
+                                ? "  - Main Image"
+                                : "  - Gallery Image"}
+                            </Typography>
+                          ))}
+                        </Stack>
                       )}
                     </Box>
-                  </Box>
-                  <Box
-                    sx={{
-                      mt: 2,
-                      border: "1px dashed #bfdbfe",
-                      borderRadius: 3,
-                      bgcolor: "#eff6ff",
-                      p: 2.5,
-                      textAlign: "center",
-                    }}
-                  >
-                    <Button
-                      variant="outlined"
-                      component="label"
-                      startIcon={<CloudUploadOutlinedIcon />}
-                      sx={{
-                        py: 1.1,
-                        px: 3,
-                        borderRadius: 2,
-                        textTransform: "none",
-                        fontWeight: 700,
-                        color: "#1d4ed8",
-                        borderColor: "#bfdbfe",
-                        bgcolor: "#ffffff",
-                        "&:hover": {
-                          bgcolor: "#dbeafe",
-                          borderColor: "#93c5fd",
-                        },
-                      }}
-                    >
-                      Upload Gallery Images
-                      <input
-                        type="file"
-                        name="gallery_images"
-                        hidden
-                        multiple
-                        accept="image/*"
-                        onChange={handleChange}
-                      />
-                    </Button>
-
-                    <Typography color="#667085" fontSize={13} sx={{ mt: 1.2 }}>
-                      You can select multiple property images
-                    </Typography>
-
-                    {formData.gallery_images.length > 0 && (
-                      <Stack spacing={0.7} sx={{ mt: 1.5 }}>
-                        {formData.gallery_images.map((file, index) => (
-                          <Typography
-                            key={index}
-                            color="#344054"
-                            fontSize={14}
-                            fontWeight={700}
-                            sx={{
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {index + 1}. {file.name}
-                          </Typography>
-                        ))}
-                      </Stack>
-                    )}
                   </Box> */}
-<Box>
+
+                  <Box>
   <SectionTitle>Property Images</SectionTitle>
 
   <Box
@@ -514,63 +482,124 @@ if (formData.property_images.length > 0) {
       borderRadius: 3,
       bgcolor: "#f0fdf4",
       p: 2.5,
-      textAlign: "center",
     }}
   >
-    <Button
-      variant="outlined"
-      component="label"
-      startIcon={<CloudUploadOutlinedIcon />}
-      sx={{
-        py: 1.1,
-        px: 3,
-        borderRadius: 2,
-        textTransform: "none",
-        fontWeight: 700,
-        color: "#047857",
-        borderColor: "#bbf7d0",
-        bgcolor: "#ffffff",
-        "&:hover": {
-          bgcolor: "#ecfdf5",
-          borderColor: "#86efac",
-        },
-      }}
-    >
-      Upload Property Images
-      <input
-        type="file"
-        name="property_images"
-        hidden
-        multiple
-        accept="image/*"
-        onChange={handleChange}
-      />
-    </Button>
-
-    <Typography color="#667085" fontSize={13} sx={{ mt: 1.2 }}>
-      Select multiple images. First selected image will be the main image.
+    <Typography color="#667085" fontSize={13} sx={{ mb: 2 }}>
+      Add images one by one. Image 1 will be used as the main image.
     </Typography>
 
-    {formData.property_images.length > 0 && (
-      <Stack spacing={0.7} sx={{ mt: 1.5 }}>
-        {formData.property_images.map((file, index) => (
-          <Typography
-            key={index}
-            color="#344054"
-            fontSize={14}
-            fontWeight={700}
-            sx={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
+    <Stack spacing={2}>
+      {formData.property_images.map((image, index) => (
+        <Box
+          key={index}
+          sx={{
+            p: 2,
+            borderRadius: 2.5,
+            bgcolor: "#ffffff",
+            border: "1px solid #d1fae5",
+            boxShadow: "0 8px 20px rgba(15, 23, 42, 0.04)",
+          }}
+        >
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            alignItems={{ xs: "stretch", sm: "center" }}
+            justifyContent="space-between"
           >
-            {index + 1}. {file.name}
-            {index === 0 ? "  - Main Image" : "  - Gallery Image"}
-          </Typography>
-        ))}
-      </Stack>
-    )}
+            <Box sx={{ minWidth: 0 }}>
+              <Typography fontWeight={900} color="#064e3b">
+                Image {index + 1}
+                {index === 0 ? " - Main Image" : " - Gallery Image"}
+              </Typography>
+
+              <Typography color="#667085" fontSize={12.5} sx={{ mt: 0.3 }}>
+                {index === 0
+                  ? "This image will show first in property cards."
+                  : "This image will show in property gallery."}
+              </Typography>
+
+              {image && (
+                <Typography
+                  color="#344054"
+                  fontSize={13}
+                  fontWeight={700}
+                  sx={{
+                    mt: 0.7,
+                    maxWidth: 340,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Selected: {image.name}
+                </Typography>
+              )}
+            </Box>
+
+            <Stack direction="row" spacing={1}>
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<CloudUploadOutlinedIcon />}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontWeight: 800,
+                  color: "#047857",
+                  borderColor: "#bbf7d0",
+                  bgcolor: "#ffffff",
+                  "&:hover": {
+                    bgcolor: "#ecfdf5",
+                    borderColor: "#86efac",
+                  },
+                }}
+              >
+                Choose File
+                <input
+                  type="file"
+                  name="property_images"
+                  hidden
+                  accept="image/*"
+                  onChange={(e) => handleChange(e, index)}
+                />
+              </Button>
+
+              {formData.property_images.length > 1 && (
+                <Button
+                  type="button"
+                  onClick={() => removeImageField(index)}
+                  sx={{
+                    minWidth: 42,
+                    borderRadius: 2,
+                    color: "#dc2626",
+                    fontWeight: 900,
+                    bgcolor: "#fef2f2",
+                    "&:hover": {
+                      bgcolor: "#fee2e2",
+                    },
+                  }}
+                >
+                  ×
+                </Button>
+              )}
+            </Stack>
+          </Stack>
+        </Box>
+      ))}
+    </Stack>
+
+    <Button
+      type="button"
+      onClick={addImageField}
+      sx={{
+        mt: 2,
+        textTransform: "none",
+        fontWeight: 900,
+        color: "#047857",
+      }}
+    >
+      + Add another image
+    </Button>
   </Box>
 </Box>
                   <Box

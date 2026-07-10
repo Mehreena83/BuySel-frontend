@@ -45,6 +45,7 @@ function PropertyDetails() {
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
   const [inquiryData, setInquiryData] = useState({
     name: "",
     phone: "",
@@ -62,7 +63,8 @@ function PropertyDetails() {
     const fetchProperty = async () => {
       try {
         const response = await axiosInstance.get(`/properties/approved/${id}/`);
-        setProperty(response.data);
+setProperty(response.data);
+setSelectedImage(response.data.main_image || "");
       } catch (err) {
         setError("Property not found or expired.");
       } finally {
@@ -170,7 +172,10 @@ function PropertyDetails() {
       </Box>
     );
   }
-
+const allImages = [
+  property.main_image,
+  ...(property.images || []).map((item) => item.image),
+].filter(Boolean);
   const facts = [
     {
       label: "Bedrooms:",
@@ -299,7 +304,7 @@ function PropertyDetails() {
           >
             {/* Left */}
             <Stack spacing={3}>
-              <Card
+              {/* <Card
                 elevation={0}
                 sx={{
                   border: "1px solid #e2e8f0",
@@ -333,8 +338,45 @@ function PropertyDetails() {
                     <HomeWorkOutlinedIcon sx={{ fontSize: 90 }} />
                   </Box>
                 )}
-              </Card>
-              {property.images && property.images.length > 0 && (
+              </Card> */}
+              <Card
+  elevation={0}
+  sx={{
+    border: "1px solid #e2e8f0",
+    borderRadius: 4,
+    overflow: "hidden",
+    bgcolor: "white",
+  }}
+>
+  {selectedImage ? (
+    <CardMedia
+      component="img"
+      image={getImageUrl(selectedImage)}
+      alt={property.title}
+      sx={{
+        height: { xs: 300, md: 500 },
+        objectFit: "cover",
+        bgcolor: "#e5e7eb",
+      }}
+    />
+  ) : (
+    <Box
+      sx={{
+        height: { xs: 300, md: 500 },
+        bgcolor: "#ecfdf5",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#059669",
+      }}
+    >
+      <HomeWorkOutlinedIcon sx={{ fontSize: 90 }} />
+    </Box>
+  )}
+</Card>
+
+
+              {/* {property.images && property.images.length > 0 && (
   <Card
     elevation={0}
     sx={{
@@ -385,8 +427,90 @@ function PropertyDetails() {
       </Box>
     </CardContent>
   </Card>
-)}
+)} */}
 
+{allImages.length > 1 && (
+  <Card
+    elevation={0}
+    sx={{
+      border: "1px solid #e2e8f0",
+      borderRadius: 3,
+      bgcolor: "white",
+    }}
+  >
+    <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 900,
+          color: "#0f172a",
+          mb: 2,
+        }}
+      >
+        Property Gallery
+      </Typography>
+
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(2, 1fr)",
+            sm: "repeat(3, 1fr)",
+            md: "repeat(4, 1fr)",
+          },
+          gap: 1.5,
+        }}
+      >
+        {allImages.map((image, index) => (
+          <Box
+            key={index}
+            onClick={() => setSelectedImage(image)}
+            sx={{
+              cursor: "pointer",
+              borderRadius: 2,
+              overflow: "hidden",
+              border:
+                selectedImage === image
+                  ? "3px solid #059669"
+                  : "1px solid #e2e8f0",
+              bgcolor: "#f8fafc",
+              position: "relative",
+            }}
+          >
+            <Box
+              component="img"
+              src={getImageUrl(image)}
+              alt={`${property.title} ${index + 1}`}
+              sx={{
+                width: "100%",
+                height: 110,
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+
+            <Box
+              sx={{
+                position: "absolute",
+                top: 8,
+                left: 8,
+                bgcolor: index === 0 ? "#059669" : "rgba(15,23,42,0.75)",
+                color: "white",
+                fontSize: 11,
+                fontWeight: 900,
+                px: 1,
+                py: 0.3,
+                borderRadius: 1,
+              }}
+            >
+              {index === 0 ? "Main" : index + 1}
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    </CardContent>
+  </Card>
+)}
               <Card
                 elevation={0}
                 sx={{
