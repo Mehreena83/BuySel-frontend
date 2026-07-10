@@ -26,6 +26,18 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import axiosInstance from "../../api/axiosInstance";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
+
+const getImageUrl = (image) => {
+  if (!image) return "";
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `${API_BASE_URL}${image}`;
+};
+
 function PropertyDetails() {
   const { id } = useParams();
   const token = localStorage.getItem("token");
@@ -299,7 +311,7 @@ function PropertyDetails() {
                 {property.main_image ? (
                   <CardMedia
                     component="img"
-                    image={property.main_image}
+                    image={getImageUrl(property.main_image)}
                     alt={property.title}
                     sx={{
                       height: { xs: 300, md: 500 },
@@ -322,6 +334,58 @@ function PropertyDetails() {
                   </Box>
                 )}
               </Card>
+              {property.images && property.images.length > 0 && (
+  <Card
+    elevation={0}
+    sx={{
+      border: "1px solid #e2e8f0",
+      borderRadius: 3,
+      bgcolor: "white",
+    }}
+  >
+    <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 900,
+          color: "#0f172a",
+          mb: 2,
+        }}
+      >
+        Property Gallery
+      </Typography>
+
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+          },
+          gap: 2,
+        }}
+      >
+        {property.images.map((item) => (
+          <Box
+            key={item.id}
+            component="img"
+            src={getImageUrl(item.image)}
+            alt={property.title}
+            sx={{
+              width: "100%",
+              height: 180,
+              objectFit: "cover",
+              borderRadius: 2,
+              border: "1px solid #e2e8f0",
+              bgcolor: "#e5e7eb",
+            }}
+          />
+        ))}
+      </Box>
+    </CardContent>
+  </Card>
+)}
 
               <Card
                 elevation={0}
