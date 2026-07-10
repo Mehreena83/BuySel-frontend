@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -30,11 +29,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
 
 const getImageUrl = (image) => {
   if (!image) return "";
-
-  if (image.startsWith("http")) {
-    return image;
-  }
-
+  if (image.startsWith("http")) return image;
   return `${API_BASE_URL}${image}`;
 };
 
@@ -42,9 +37,9 @@ function PropertyDetails() {
   const { id } = useParams();
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState("");
   const [inquiryData, setInquiryData] = useState({
     name: "",
@@ -63,10 +58,15 @@ function PropertyDetails() {
     const fetchProperty = async () => {
       try {
         const response = await axiosInstance.get(`/properties/approved/${id}/`);
-setProperty(response.data);
-setSelectedImage(response.data.main_image || "");
+
+        setProperty(response.data);
+        setSelectedImage(response.data.main_image || "");
       } catch (err) {
-        setError("Property not found or expired.");
+        setSnackbar({
+          open: true,
+          message: "Property not found or expired.",
+          severity: "error",
+        });
       } finally {
         setLoading(false);
       }
@@ -84,6 +84,7 @@ setSelectedImage(response.data.main_image || "");
 
   const handleInquirySubmit = async (e) => {
     e.preventDefault();
+
     if (!token) {
       setSnackbar({
         open: true,
@@ -92,7 +93,6 @@ setSelectedImage(response.data.main_image || "");
       });
 
       setTimeout(() => {
-        // navigate("/login");
         navigate("/login", {
           state: {
             from: `/properties/${id}`,
@@ -168,14 +168,28 @@ setSelectedImage(response.data.main_image || "");
           justifyContent: "center",
         }}
       >
-        <CircularProgress />
+        <CircularProgress sx={{ color: "#059669" }} />
       </Box>
     );
   }
-const allImages = [
-  property.main_image,
-  ...(property.images || []).map((item) => item.image),
-].filter(Boolean);
+
+  if (!property) {
+    return (
+      <Box sx={{ minHeight: "100vh", bgcolor: "#f8fafc", py: 6 }}>
+        <Container>
+          <Typography color="error" fontWeight={800}>
+            Property not found.
+          </Typography>
+        </Container>
+      </Box>
+    );
+  }
+
+  const allImages = [
+    property.main_image,
+    ...(property.images || []).map((item) => item.image),
+  ].filter(Boolean);
+
   const facts = [
     {
       label: "Bedrooms:",
@@ -217,7 +231,6 @@ const allImages = [
             Back to Properties
           </Button>
 
-          {/* Header */}
           <Card
             elevation={0}
             sx={{
@@ -302,215 +315,128 @@ const allImages = [
               alignItems: "start",
             }}
           >
-            {/* Left */}
             <Stack spacing={3}>
-              {/* <Card
+              <Card
                 elevation={0}
                 sx={{
                   border: "1px solid #e2e8f0",
                   borderRadius: 4,
-                  overflow: "hidden",
                   bgcolor: "white",
+                  p: { xs: 1.5, md: 2 },
                 }}
               >
-                {property.main_image ? (
-                  <CardMedia
-                    component="img"
-                    image={getImageUrl(property.main_image)}
-                    alt={property.title}
-                    sx={{
-                      height: { xs: 300, md: 500 },
-                      objectFit: "cover",
-                      bgcolor: "#e5e7eb",
-                    }}
-                  />
-                ) : (
-                  <Box
-                    sx={{
-                      height: { xs: 300, md: 500 },
-                      bgcolor: "#ecfdf5",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#059669",
-                    }}
-                  >
-                    <HomeWorkOutlinedIcon sx={{ fontSize: 90 }} />
+                <Stack spacing={1.5}>
+                  <Box>
+                    {selectedImage ? (
+                      <CardMedia
+                        component="img"
+                        image={getImageUrl(selectedImage)}
+                        alt={property.title}
+                        sx={{
+                          width: "100%",
+                          height: { xs: 300, sm: 390, md: 500 },
+                          objectFit: "cover",
+                          borderRadius: 3,
+                          bgcolor: "#e5e7eb",
+                          display: "block",
+                        }}
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          height: { xs: 300, sm: 390, md: 500 },
+                          bgcolor: "#ecfdf5",
+                          borderRadius: 3,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#059669",
+                        }}
+                      >
+                        <HomeWorkOutlinedIcon sx={{ fontSize: 80 }} />
+                      </Box>
+                    )}
                   </Box>
-                )}
-              </Card> */}
-              <Card
-  elevation={0}
-  sx={{
-    border: "1px solid #e2e8f0",
-    borderRadius: 4,
-    overflow: "hidden",
-    bgcolor: "white",
-  }}
->
-  {selectedImage ? (
-    <CardMedia
-      component="img"
-      image={getImageUrl(selectedImage)}
-      alt={property.title}
-      sx={{
-        height: { xs: 300, md: 500 },
-        objectFit: "cover",
-        bgcolor: "#e5e7eb",
-      }}
-    />
-  ) : (
-    <Box
-      sx={{
-        height: { xs: 300, md: 500 },
-        bgcolor: "#ecfdf5",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#059669",
-      }}
-    >
-      <HomeWorkOutlinedIcon sx={{ fontSize: 90 }} />
-    </Box>
-  )}
-</Card>
 
+                  {allImages.length > 1 && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 1.2,
+                        overflowX: "auto",
+                        pb: 0.5,
+                        pt: 0.5,
+                        "&::-webkit-scrollbar": {
+                          height: 6,
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          bgcolor: "#cbd5e1",
+                          borderRadius: 10,
+                        },
+                      }}
+                    >
+                      {allImages.map((image, index) => (
+                        <Box
+                          key={index}
+                          onClick={() => setSelectedImage(image)}
+                          sx={{
+                            width: { xs: 82, md: 95 },
+                            height: { xs: 64, md: 72 },
+                            flexShrink: 0,
+                            borderRadius: 2,
+                            overflow: "hidden",
+                            cursor: "pointer",
+                            border:
+                              selectedImage === image
+                                ? "2px solid #059669"
+                                : "1px solid #e5e7eb",
+                            bgcolor: "#f8fafc",
+                            p: selectedImage === image ? 0.35 : 0,
+                            transition: "0.2s ease",
+                            position: "relative",
+                            "&:hover": {
+                              borderColor: "#059669",
+                            },
+                          }}
+                        >
+                          <Box
+                            component="img"
+                            src={getImageUrl(image)}
+                            alt={`${property.title} ${index + 1}`}
+                            sx={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              display: "block",
+                              borderRadius: selectedImage === image ? 1.5 : 2,
+                            }}
+                          />
 
-              {/* {property.images && property.images.length > 0 && (
-  <Card
-    elevation={0}
-    sx={{
-      border: "1px solid #e2e8f0",
-      borderRadius: 3,
-      bgcolor: "white",
-    }}
-  >
-    <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-      <Typography
-        variant="h6"
-        sx={{
-          fontWeight: 900,
-          color: "#0f172a",
-          mb: 2,
-        }}
-      >
-        Property Gallery
-      </Typography>
-
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(2, 1fr)",
-            md: "repeat(3, 1fr)",
-          },
-          gap: 2,
-        }}
-      >
-        {property.images.map((item) => (
-          <Box
-            key={item.id}
-            component="img"
-            src={getImageUrl(item.image)}
-            alt={property.title}
-            sx={{
-              width: "100%",
-              height: 180,
-              objectFit: "cover",
-              borderRadius: 2,
-              border: "1px solid #e2e8f0",
-              bgcolor: "#e5e7eb",
-            }}
-          />
-        ))}
-      </Box>
-    </CardContent>
-  </Card>
-)} */}
-
-{allImages.length > 1 && (
-  <Card
-    elevation={0}
-    sx={{
-      border: "1px solid #e2e8f0",
-      borderRadius: 3,
-      bgcolor: "white",
-    }}
-  >
-    <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-      <Typography
-        variant="h6"
-        sx={{
-          fontWeight: 900,
-          color: "#0f172a",
-          mb: 2,
-        }}
-      >
-        Property Gallery
-      </Typography>
-
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "repeat(2, 1fr)",
-            sm: "repeat(3, 1fr)",
-            md: "repeat(4, 1fr)",
-          },
-          gap: 1.5,
-        }}
-      >
-        {allImages.map((image, index) => (
-          <Box
-            key={index}
-            onClick={() => setSelectedImage(image)}
-            sx={{
-              cursor: "pointer",
-              borderRadius: 2,
-              overflow: "hidden",
-              border:
-                selectedImage === image
-                  ? "3px solid #059669"
-                  : "1px solid #e2e8f0",
-              bgcolor: "#f8fafc",
-              position: "relative",
-            }}
-          >
-            <Box
-              component="img"
-              src={getImageUrl(image)}
-              alt={`${property.title} ${index + 1}`}
-              sx={{
-                width: "100%",
-                height: 110,
-                objectFit: "cover",
-                display: "block",
-              }}
-            />
-
-            <Box
-              sx={{
-                position: "absolute",
-                top: 8,
-                left: 8,
-                bgcolor: index === 0 ? "#059669" : "rgba(15,23,42,0.75)",
-                color: "white",
-                fontSize: 11,
-                fontWeight: 900,
-                px: 1,
-                py: 0.3,
-                borderRadius: 1,
-              }}
-            >
-              {index === 0 ? "Main" : index + 1}
-            </Box>
-          </Box>
-        ))}
-      </Box>
-    </CardContent>
-  </Card>
-)}
+                          {index === 0 && (
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                left: 5,
+                                bottom: 5,
+                                px: 0.7,
+                                py: 0.2,
+                                borderRadius: 1,
+                                bgcolor: "rgba(6, 95, 70, 0.9)",
+                                color: "#ffffff",
+                                fontSize: 10,
+                                fontWeight: 600,
+                                lineHeight: 1.2,
+                              }}
+                            >
+                              Main
+                            </Box>
+                          )}
+                        </Box>
+                      ))}
+                    </Box>
+                  )}
+                </Stack>
+              </Card>
               <Card
                 elevation={0}
                 sx={{
@@ -525,7 +451,7 @@ const allImages = [
                     component="strong"
                     sx={{
                       display: "block",
-                      fontWeight: 600,
+                      fontWeight: 900,
                       color: "#0f172a",
                     }}
                   >
@@ -603,7 +529,6 @@ const allImages = [
               </Card>
             </Stack>
 
-            {/* Right */}
             <Stack
               spacing={3}
               sx={{ position: { md: "sticky" }, top: { md: 94 } }}
@@ -678,26 +603,6 @@ const allImages = [
                   border: "1px solid rgba(255,255,255,0.12)",
                   boxShadow: "0 22px 45px rgba(6, 78, 59, 0.22)",
                   position: "relative",
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    top: -70,
-                    right: -70,
-                    width: 170,
-                    height: 170,
-                    borderRadius: "50%",
-                    bgcolor: "rgba(255,255,255,0.08)",
-                  },
-                  "&::after": {
-                    content: '""',
-                    position: "absolute",
-                    bottom: -90,
-                    left: -90,
-                    width: 190,
-                    height: 190,
-                    borderRadius: "50%",
-                    bgcolor: "rgba(16,185,129,0.16)",
-                  },
                 }}
               >
                 <CardContent sx={{ p: 3, position: "relative", zIndex: 1 }}>
@@ -722,23 +627,10 @@ const allImages = [
                     sx={{
                       fontWeight: 900,
                       color: "white",
-                      letterSpacing: "-0.2px",
                     }}
                   >
                     Contact Agent
                   </Typography>
-
-                  {/* <Typography
-                    sx={{
-                      color: "#d1fae5",
-                      mt: 1,
-                      lineHeight: 1.7,
-                      fontSize: 14.5,
-                    }}
-                  >
-                    Share your details with the agent. They will review your
-                    inquiry and contact you soon.
-                  </Typography> */}
 
                   <Typography
                     sx={{
@@ -804,6 +696,7 @@ const allImages = [
                           },
                         }}
                       />
+
                       <Button
                         type="submit"
                         fullWidth
@@ -833,6 +726,7 @@ const allImages = [
                   </Box>
                 </CardContent>
               </Card>
+
               <Card
                 elevation={0}
                 sx={{
@@ -846,7 +740,7 @@ const allImages = [
                     component="strong"
                     sx={{
                       display: "block",
-                      fontWeight: 600,
+                      fontWeight: 900,
                       color: "#0f172a",
                       fontSize: 16,
                     }}
@@ -855,7 +749,7 @@ const allImages = [
                   </Typography>
 
                   <Stack spacing={1.7} sx={{ mt: 2 }}>
-                    <InfoRow label="Status: " value={property.status} />
+                    <InfoRow label="Status:" value={property.status} />
                     <InfoRow
                       label="Expires On:"
                       value={property.expires_at || "Not set"}
@@ -875,6 +769,7 @@ const allImages = [
           </Box>
         </Container>
       </Box>
+
       <AppSnackbar
         open={snackbar.open}
         message={snackbar.message}

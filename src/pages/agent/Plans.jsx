@@ -109,35 +109,32 @@ function Plans() {
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#f8fafc" }}>
-      <Box
-        sx={{
-          bgcolor: "#ffffff",
-          borderBottom: "1px solid #e5e7eb",
-        }}
-      >
-        <Container maxWidth="lg">
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ minHeight: 72 }}
-          >
-            <Button
-              component={Link}
-              to="/dashboard"
-              startIcon={<ArrowBackIcon />}
-              sx={{
-                color: "#475467",
-                fontWeight: 700,
-                textTransform: "none",
-              }}
-            >
-              Back to Dashboard
-            </Button>
-          </Stack>
-        </Container>
-      </Box>
-
+      <Container maxWidth="lg" sx={{ pt: { xs: 3, md: 4 } }}>
+        <Button
+          component={Link}
+          to="/dashboard"
+          startIcon={<ArrowBackIcon />}
+          sx={{
+            color: "#344054",
+            bgcolor: "#f0fdfa",
+            px: 1.8,
+            py: 0.9,
+            borderRadius: 3,
+            fontWeight: 600,
+            textTransform: "none",
+            boxShadow: "none",
+            "& .MuiButton-startIcon": {
+              mr: 0.8,
+            },
+            "&:hover": {
+              bgcolor: "#ecfdf5",
+              boxShadow: "none",
+            },
+          }}
+        >
+          Back to Dashboard
+        </Button>
+      </Container>
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
         <Box
           sx={{
