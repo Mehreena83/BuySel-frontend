@@ -54,8 +54,7 @@ function AddProperty() {
     bedrooms: "",
     bathrooms: "",
     area_sqft: "",
-    main_image: null,
-    gallery_images: [],
+property_images: [],
   });
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -64,31 +63,24 @@ function AddProperty() {
   });
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  // const handleChange = (e) => {
-  //   const { name, value, files } = e.target;
+const handleChange = (e) => {
+  const { name, value, files } = e.target;
 
-  //   setFormData({
-  //     ...formData,
-  //     [name]: files ? files[0] : value,
-  //   });
-  // };
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (name === "gallery_images") {
-      setFormData({
-        ...formData,
-        gallery_images: Array.from(files),
-      });
-      return;
-    }
-
+  if (name === "property_images") {
     setFormData({
       ...formData,
-      [name]: files ? files[0] : value,
+      property_images: Array.from(files),
     });
-  };
+    return;
+  }
+
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+};
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -96,16 +88,19 @@ function AddProperty() {
 
     const data = new FormData();
 
-    Object.keys(formData).forEach((key) => {
-      if (key === "gallery_images") {
-        formData.gallery_images.forEach((image) => {
-          data.append("gallery_images", image);
-        });
-      } else if (formData[key] !== "" && formData[key] !== null) {
-        data.append(key, formData[key]);
-      }
-    });
+Object.keys(formData).forEach((key) => {
+  if (key !== "property_images" && formData[key] !== "") {
+    data.append(key, formData[key]);
+  }
+});
 
+if (formData.property_images.length > 0) {
+  data.append("main_image", formData.property_images[0]);
+
+  formData.property_images.slice(1).forEach((image) => {
+    data.append("gallery_images", image);
+  });
+}
     try {
       const response = await axiosInstance.post(
         "/properties/my-properties/",
@@ -380,7 +375,7 @@ function AddProperty() {
 
                   <Divider />
 
-                  <Box>
+                  {/* <Box>
                     <SectionTitle>Property Image</SectionTitle>
 
                     <Box
@@ -509,8 +504,75 @@ function AddProperty() {
                         ))}
                       </Stack>
                     )}
-                  </Box>
+                  </Box> */}
+<Box>
+  <SectionTitle>Property Images</SectionTitle>
 
+  <Box
+    sx={{
+      border: "1px dashed #bbf7d0",
+      borderRadius: 3,
+      bgcolor: "#f0fdf4",
+      p: 2.5,
+      textAlign: "center",
+    }}
+  >
+    <Button
+      variant="outlined"
+      component="label"
+      startIcon={<CloudUploadOutlinedIcon />}
+      sx={{
+        py: 1.1,
+        px: 3,
+        borderRadius: 2,
+        textTransform: "none",
+        fontWeight: 700,
+        color: "#047857",
+        borderColor: "#bbf7d0",
+        bgcolor: "#ffffff",
+        "&:hover": {
+          bgcolor: "#ecfdf5",
+          borderColor: "#86efac",
+        },
+      }}
+    >
+      Upload Property Images
+      <input
+        type="file"
+        name="property_images"
+        hidden
+        multiple
+        accept="image/*"
+        onChange={handleChange}
+      />
+    </Button>
+
+    <Typography color="#667085" fontSize={13} sx={{ mt: 1.2 }}>
+      Select multiple images. First selected image will be the main image.
+    </Typography>
+
+    {formData.property_images.length > 0 && (
+      <Stack spacing={0.7} sx={{ mt: 1.5 }}>
+        {formData.property_images.map((file, index) => (
+          <Typography
+            key={index}
+            color="#344054"
+            fontSize={14}
+            fontWeight={700}
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {index + 1}. {file.name}
+            {index === 0 ? "  - Main Image" : "  - Gallery Image"}
+          </Typography>
+        ))}
+      </Stack>
+    )}
+  </Box>
+</Box>
                   <Box
                     sx={{
                       pt: 1,
