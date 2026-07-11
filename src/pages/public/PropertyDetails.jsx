@@ -190,28 +190,48 @@ function PropertyDetails() {
     ...(property.images || []).map((item) => item.image),
   ].filter(Boolean);
 
-  const facts = [
-    {
-      label: "Bedrooms:",
-      value: property.bedrooms,
-      icon: <BedOutlinedIcon />,
-    },
-    {
-      label: "Bathrooms:",
-      value: property.bathrooms,
-      icon: <BathtubOutlinedIcon />,
-    },
-    {
-      label: "Area:",
-      value: `${property.area_sqft || 0} sqft`,
-      icon: <SquareFootOutlinedIcon />,
-    },
-    {
-      label: "Agent:",
-      value: property.agent_name,
-      icon: <PersonOutlineOutlinedIcon />,
-    },
-  ];
+const formatLabel = (key) => {
+  return key
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+const formatDetailValue = (key, value) => {
+  if (!value && value !== 0) return "N/A";
+
+  if (
+    key.includes("price") ||
+    key.includes("amount")
+  ) {
+    return `₹${Number(value).toLocaleString("en-IN")}`;
+  }
+
+  if (
+    key.includes("area") ||
+    key.includes("sqft") ||
+    key === "builtup_area_sqft"
+  ) {
+    return `${value} sqft`;
+  }
+
+  if (key.includes("cent")) {
+    return `${value} cent`;
+  }
+
+  return value;
+};
+
+const detailEntries = Object.entries(property.details || {}).filter(
+  ([, value]) => value !== "" && value !== null && value !== undefined,
+);
+
+const overviewItems = detailEntries.slice(0, 3);
+
+const agentFact = {
+  label: "Agent:",
+  value: property.agent_name,
+  icon: <PersonOutlineOutlinedIcon />,
+};
 
   return (
     <>
@@ -466,29 +486,56 @@ function PropertyDetails() {
                       mt: 3,
                     }}
                   >
-                    {facts.slice(0, 3).map((item) => (
-                      <Box
-                        key={item.label}
-                        sx={{
-                          p: 2,
-                          borderRadius: 3,
-                          bgcolor: "#f8fafc",
-                          border: "1px solid #e2e8f0",
-                        }}
-                      >
-                        <Box sx={{ color: "#059669", mb: 1 }}>{item.icon}</Box>
-                        <Typography
-                          color="#64748b"
-                          fontSize={13}
-                          fontWeight={700}
-                        >
-                          {item.label}
-                        </Typography>
-                        <Typography color="#0f172a" fontWeight={900}>
-                          {item.value}
-                        </Typography>
-                      </Box>
-                    ))}
+                    {overviewItems.length > 0 ? (
+  overviewItems.map(([key, value]) => (
+    <Box
+      key={key}
+      sx={{
+        p: 2,
+        borderRadius: 3,
+        bgcolor: "#f8fafc",
+        border: "1px solid #e2e8f0",
+      }}
+    >
+      <Box sx={{ color: "#059669", mb: 1 }}>
+        <HomeWorkOutlinedIcon />
+      </Box>
+
+      <Typography
+        color="#64748b"
+        fontSize={13}
+        fontWeight={700}
+      >
+        {formatLabel(key)}
+      </Typography>
+
+      <Typography color="#0f172a" fontWeight={900}>
+        {formatDetailValue(key, value)}
+      </Typography>
+    </Box>
+  ))
+) : (
+  <Box
+    sx={{
+      p: 2,
+      borderRadius: 3,
+      bgcolor: "#f8fafc",
+      border: "1px solid #e2e8f0",
+    }}
+  >
+    <Box sx={{ color: "#059669", mb: 1 }}>
+      <HomeWorkOutlinedIcon />
+    </Box>
+
+    <Typography color="#64748b" fontSize={13} fontWeight={700}>
+      Property Type
+    </Typography>
+
+    <Typography color="#0f172a" fontWeight={900} sx={{ textTransform: "capitalize" }}>
+      {property.property_type}
+    </Typography>
+  </Box>
+)}
                   </Box>
 
                   <Divider sx={{ my: 3 }} />
@@ -561,34 +608,53 @@ function PropertyDetails() {
                   <Divider sx={{ my: 3 }} />
 
                   <Stack spacing={2.2}>
-                    {facts.map((item) => (
-                      <Stack
-                        key={item.label}
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        spacing={2}
-                      >
-                        <Stack
-                          direction="row"
-                          spacing={1.2}
-                          alignItems="center"
-                        >
-                          <Box sx={{ color: "#059669", display: "flex" }}>
-                            {item.icon}
-                          </Box>
-                          <Typography color="#64748b">{item.label}</Typography>
-                        </Stack>
+                   {detailEntries.map(([key, value]) => (
+  <Stack
+    key={key}
+    direction="row"
+    justifyContent="space-between"
+    alignItems="center"
+    spacing={2}
+  >
+    <Stack direction="row" spacing={1.2} alignItems="center">
+      <Box sx={{ color: "#059669", display: "flex" }}>
+        <HomeWorkOutlinedIcon fontSize="small" />
+      </Box>
 
-                        <Typography
-                          fontWeight={900}
-                          color="#0f172a"
-                          textAlign="right"
-                        >
-                          {item.value}
-                        </Typography>
-                      </Stack>
-                    ))}
+      <Typography color="#64748b">
+        {formatLabel(key)}:
+      </Typography>
+    </Stack>
+
+    <Typography
+      fontWeight={900}
+      color="#0f172a"
+      textAlign="right"
+      sx={{ textTransform: "capitalize" }}
+    >
+      {formatDetailValue(key, value)}
+    </Typography>
+  </Stack>
+))}
+
+<Stack
+  direction="row"
+  justifyContent="space-between"
+  alignItems="center"
+  spacing={2}
+>
+  <Stack direction="row" spacing={1.2} alignItems="center">
+    <Box sx={{ color: "#059669", display: "flex" }}>
+      {agentFact.icon}
+    </Box>
+
+    <Typography color="#64748b">{agentFact.label}</Typography>
+  </Stack>
+
+  <Typography fontWeight={900} color="#0f172a" textAlign="right">
+    {agentFact.value}
+  </Typography>
+</Stack>
                   </Stack>
                 </CardContent>
               </Card>

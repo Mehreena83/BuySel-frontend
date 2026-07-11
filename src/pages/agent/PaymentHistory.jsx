@@ -11,6 +11,7 @@ import {
   Container,
   Stack,
   Typography,
+  Divider,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
@@ -37,32 +38,32 @@ function PaymentHistory() {
     return "warning";
   };
 
-const formatPaymentMethod = (method) => {
-  if (!method) return "N/A";
+  const formatPaymentMethod = (method) => {
+    if (!method) return "N/A";
 
-  if (method === "card") return "Card";
-  if (method === "upi") return "UPI";
-  if (method === "netbanking") return "Net Banking";
-  if (method === "wallet") return "Wallet";
-  if (method === "emi") return "EMI";
-  if (method === "paylater") return "Pay Later";
+    if (method === "card") return "Card";
+    if (method === "upi") return "UPI";
+    if (method === "netbanking") return "Net Banking";
+    if (method === "wallet") return "Wallet";
+    if (method === "emi") return "EMI";
+    if (method === "paylater") return "Pay Later";
 
-  return method;
-};
+    return method;
+  };
 
   const calculateExpireDate = (payment) => {
-  if (payment.expire_date) return payment.expire_date;
+    if (payment.expire_date) return payment.expire_date;
 
-  const startDate = payment.plan_taken_date || payment.created_at;
-  const duration = Number(payment.plan_duration || 0);
+    const startDate = payment.plan_taken_date || payment.created_at;
+    const duration = Number(payment.plan_duration || 0);
 
-  if (!startDate || !duration) return null;
+    if (!startDate || !duration) return null;
 
-  const date = new Date(startDate);
-  date.setDate(date.getDate() + duration);
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + duration);
 
-  return date;
-};
+    return date;
+  };
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -81,7 +82,13 @@ const formatPaymentMethod = (method) => {
   }, []);
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f8fafc", py: { xs: 3, md: 5 } }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        bgcolor: "#f8fafc",
+        py: { xs: 3, md: 5 },
+      }}
+    >
       <Container maxWidth="lg">
         <Button
           component={Link}
@@ -89,9 +96,14 @@ const formatPaymentMethod = (method) => {
           startIcon={<ArrowBackIcon />}
           sx={{
             color: "#475467",
-            fontWeight: 700,
+            fontWeight: 600,
             textTransform: "none",
             mb: 3,
+            px: 0,
+            "&:hover": {
+              bgcolor: "transparent",
+              color: "#047857",
+            },
           }}
         >
           Back to Dashboard
@@ -100,16 +112,16 @@ const formatPaymentMethod = (method) => {
         <Box sx={{ mb: 4 }}>
           <Typography
             sx={{
-              fontSize: { xs: 28, md: 36 },
-              fontWeight: 900,
-              color: "#0f172a",
-              letterSpacing: "-0.5px",
+              fontSize: { xs: 27, md: 34 },
+              fontWeight: 700,
+              color: "#111827",
+              letterSpacing: "-0.4px",
             }}
           >
             Plan Order History
           </Typography>
 
-          <Typography color="#667085" sx={{ mt: 1 }}>
+          <Typography color="#667085" sx={{ mt: 1, fontSize: 15 }}>
             View your plan purchases, payment method, amount and expiry details.
           </Typography>
         </Box>
@@ -132,15 +144,34 @@ const formatPaymentMethod = (method) => {
             sx={{
               border: "1px solid #e5e7eb",
               borderRadius: 3,
-              bgcolor: "white",
+              bgcolor: "#ffffff",
             }}
           >
             <CardContent sx={{ py: 8, textAlign: "center" }}>
-              <ReceiptLongOutlinedIcon
-                sx={{ fontSize: 54, color: "#059669" }}
-              />
+              <Box
+                sx={{
+                  width: 64,
+                  height: 64,
+                  mx: "auto",
+                  borderRadius: "50%",
+                  bgcolor: "#ecfdf5",
+                  color: "#059669",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <ReceiptLongOutlinedIcon sx={{ fontSize: 34 }} />
+              </Box>
 
-              <Typography sx={{ mt: 2, fontWeight: 900, fontSize: 20 }}>
+              <Typography
+                sx={{
+                  mt: 2,
+                  fontWeight: 700,
+                  fontSize: 20,
+                  color: "#111827",
+                }}
+              >
                 No order history yet
               </Typography>
 
@@ -156,7 +187,9 @@ const formatPaymentMethod = (method) => {
                   bgcolor: "#065f46",
                   borderRadius: 2,
                   textTransform: "none",
-                  fontWeight: 800,
+                  fontWeight: 600,
+                  px: 3,
+                  py: 1,
                   boxShadow: "none",
                   "&:hover": {
                     bgcolor: "#047857",
@@ -179,22 +212,23 @@ const formatPaymentMethod = (method) => {
                 sx={{
                   border: "1px solid #e5e7eb",
                   borderRadius: 3,
-                  bgcolor: "white",
+                  bgcolor: "#ffffff",
                   transition: "0.2s ease",
                   "&:hover": {
+                    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.05)",
                     borderColor: "#bbf7d0",
-                    boxShadow: "0 12px 30px rgba(15,23,42,0.07)",
                   },
                 }}
               >
-                <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+                <CardContent sx={{ p: { xs: 2.4, md: 3 } }}>
                   <Stack
                     direction={{ xs: "column", md: "row" }}
                     justifyContent="space-between"
+                    alignItems={{ xs: "stretch", md: "flex-start" }}
                     spacing={2.5}
                   >
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Stack direction="row" spacing={1.2} alignItems="center">
+                      <Stack direction="row" spacing={1.3} alignItems="center">
                         <Box
                           sx={{
                             width: 44,
@@ -214,20 +248,24 @@ const formatPaymentMethod = (method) => {
                         <Box sx={{ minWidth: 0 }}>
                           <Typography
                             sx={{
-                              fontWeight: 900,
-                              color: "#0f172a",
+                              fontWeight: 700,
+                              color: "#111827",
                               fontSize: 18,
                               textTransform: "capitalize",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
                             }}
                           >
                             {payment.plan_name || "Plan"}
                           </Typography>
 
-                          <Typography color="#667085" fontSize={13}>
+                          <Typography color="#667085" fontSize={13.5}>
                             Duration: {payment.plan_duration || "N/A"} days
                           </Typography>
                         </Box>
                       </Stack>
+                      <Divider sx={{ my: 2 }} />
 
                       <Box
                         sx={{
@@ -236,21 +274,21 @@ const formatPaymentMethod = (method) => {
                             xs: "1fr",
                             sm: "repeat(2, 1fr)",
                           },
-                          gap: 1.5,
-                          mt: 2.5,
+                          gap: 1.4,
+                          mt: 2.4,
                         }}
                       >
                         <InfoItem
-                          label="Plan Taken Date"
+                          label="Plan Taken"
                           value={formatDate(
                             payment.plan_taken_date || payment.created_at,
                           )}
                         />
 
                         <InfoItem
-  label="Expire Date"
-  value={formatDate(calculateExpireDate(payment))}
-/>
+                          label="Expire Date"
+                          value={formatDate(calculateExpireDate(payment))}
+                        />
 
                         <InfoItem
                           label="Payment Method"
@@ -281,17 +319,18 @@ const formatPaymentMethod = (method) => {
                         display: "flex",
                         alignItems: { xs: "flex-start", md: "flex-end" },
                         flexDirection: "column",
-                        gap: 1,
+                        gap: 1.1,
                         flexShrink: 0,
                       }}
                     >
                       <Chip
                         label={payment.status || "created"}
                         color={getStatusColor(payment.status)}
+                        size="small"
                         sx={{
-                          fontWeight: 900,
+                          fontWeight: 600,
                           textTransform: "capitalize",
-                          borderRadius: 2,
+                          borderRadius: "999px",
                         }}
                       />
 
@@ -301,8 +340,13 @@ const formatPaymentMethod = (method) => {
                         size="small"
                         sx={{
                           textTransform: "none",
-                          fontWeight: 800,
-                          color: "#059669",
+                          fontWeight: 600,
+                          color: "#047857",
+                          px: 0,
+                          "&:hover": {
+                            bgcolor: "transparent",
+                            color: "#065f46",
+                          },
                         }}
                       >
                         View Plans
@@ -323,28 +367,30 @@ function InfoItem({ label, value }) {
   return (
     <Box
       sx={{
-        p: 1.4,
+        p: 1.25,
         borderRadius: 2,
         bgcolor: "#f8fafc",
         border: "1px solid #eef2f7",
       }}
     >
       <Typography
-        color="#94a3b8"
-        fontSize={12}
-        fontWeight={900}
-        sx={{ textTransform: "uppercase", letterSpacing: 0.4 }}
+        sx={{
+          color: "#98a2b3",
+          fontSize: 12,
+          fontWeight: 500,
+          mb: 0.35,
+        }}
       >
         {label}
       </Typography>
 
       <Typography
-        color="#344054"
-        fontSize={13.5}
-        fontWeight={800}
         sx={{
-          mt: 0.5,
+          color: "#344054",
+          fontSize: 13,
+          fontWeight: 600,
           wordBreak: "break-word",
+          lineHeight: 1.4,
         }}
       >
         {value || "N/A"}
