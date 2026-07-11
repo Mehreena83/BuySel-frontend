@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Avatar,
@@ -21,6 +20,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import { Link, useLocation } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 
@@ -89,6 +89,11 @@ function Dashboard() {
       label: "Plans",
       path: "/plans",
       icon: <WorkspacePremiumOutlinedIcon />,
+    },
+    {
+      label: "Orders",
+      path: "/payment-history",
+      icon: <ReceiptLongOutlinedIcon />,
     },
     {
       label: "Inquiries",
@@ -396,6 +401,9 @@ function Dashboard() {
           <Button component={Link} to="/plans" sx={mobileMenuStyle}>
             Plans
           </Button>
+          <Button component={Link} to="/payment-history" sx={mobileMenuStyle}>
+            Order History
+          </Button>
 
           <Button component={Link} to="/my-inquiries" sx={mobileMenuStyle}>
             Inquiries
@@ -670,6 +678,15 @@ function Dashboard() {
                 >
                   View Plans
                 </Button>
+                <Button
+                  component={Link}
+                  to="/payment-history"
+                  variant="outlined"
+                  fullWidth
+                  sx={actionOutlineStyle}
+                >
+                  Plan Order History
+                </Button>
 
                 <Button
                   component={Link}
@@ -726,45 +743,6 @@ function Dashboard() {
     </Box>
   );
 }
-
-// const navButtonStyle = (active) => ({
-//   color: active ? "#065f46" : "#475467",
-//   border: "1px solid transparent",
-//   borderRadius: 0,
-//   px: 0.4,
-//   py: 2.6,
-//   mx: 0.7,
-//   fontWeight: active ? 700 : 500,
-//   fontSize: 14,
-//   textTransform: "none",
-//   position: "relative",
-//   bgcolor: "transparent",
-//   minWidth: "auto",
-//   "& .MuiButton-startIcon": {
-//     mr: 0.6,
-//   },
-//   "& .MuiSvgIcon-root": {
-//     fontSize: 18,
-//   },
-//   "&::after": {
-//     content: '""',
-//     position: "absolute",
-//     left: 8,
-//     right: 8,
-//     bottom: 12,
-//     height: "2.5px",
-//     borderRadius: "999px",
-//     bgcolor: active ? "#059669" : "transparent",
-//     transition: "0.2s ease",
-//   },
-//   "&:hover": {
-//     bgcolor: "transparent",
-//     color: "#065f46",
-//   },
-//   "&:hover::after": {
-//     bgcolor: "#059669",
-//   },
-// });
 
 const navButtonStyle = (active) => ({
   color: active ? "#065f46" : "#475467",

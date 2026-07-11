@@ -115,21 +115,10 @@ function Plans() {
           to="/dashboard"
           startIcon={<ArrowBackIcon />}
           sx={{
-            color: "#344054",
-            bgcolor: "#f0fdfa",
-            px: 1.8,
-            py: 0.9,
-            borderRadius: 3,
-            fontWeight: 600,
+            color: "#475467",
+            fontWeight: 700,
             textTransform: "none",
-            boxShadow: "none",
-            "& .MuiButton-startIcon": {
-              mr: 0.8,
-            },
-            "&:hover": {
-              bgcolor: "#ecfdf5",
-              boxShadow: "none",
-            },
+            mb: 3,
           }}
         >
           Back to Dashboard

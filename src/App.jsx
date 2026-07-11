@@ -13,6 +13,7 @@ import MyProperties from "./pages/agent/MyProperties";
 import MyInquiries from "./pages/agent/MyInquiries";
 import EditProperty from "./pages/agent/EditProperty";
 import AgentRoute from "./routes/AgentRoute";
+import PaymentHistory from "./pages/agent/PaymentHistory";
 
 function App() {
   return (
@@ -79,6 +80,14 @@ function App() {
           </AgentRoute>
         }
       />
+      <Route
+  path="/payment-history"
+  element={
+    <AgentRoute>
+      <PaymentHistory />
+    </AgentRoute>
+  }
+/>
     </Routes>
   );
 }
