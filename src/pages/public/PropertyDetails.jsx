@@ -196,86 +196,86 @@ function PropertyDetails() {
     ...(property.images || []).map((item) => item.image),
   ].filter(Boolean);
 
-const formatLabel = (key) => {
-  return key
-    .replaceAll("_", " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-};
+  const formatLabel = (key) => {
+    return key
+      .replaceAll("_", " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
-const formatDetailValue = (key, value) => {
-  if (!value && value !== 0) return "N/A";
+  const formatDetailValue = (key, value) => {
+    if (!value && value !== 0) return "N/A";
 
-  if (
-    key.includes("price") ||
-    key.includes("amount")
-  ) {
-    return `₹${Number(value).toLocaleString("en-IN")}`;
-  }
+    if (key.includes("price") || key.includes("amount")) {
+      return `₹${Number(value).toLocaleString("en-IN")}`;
+    }
 
-  if (
-    key.includes("area") ||
-    key.includes("sqft") ||
-    key === "builtup_area_sqft"
-  ) {
-    return `${value} sqft`;
-  }
+    if (
+      key.includes("area") ||
+      key.includes("sqft") ||
+      key === "builtup_area_sqft"
+    ) {
+      return `${value} sqft`;
+    }
 
-  if (key.includes("cent")) {
-    return `${value} cent`;
-  }
+    if (key.includes("cent")) {
+      return `${value} cent`;
+    }
 
-  return value;
-};
+    return value;
+  };
 
-const getDetailIcon = (key) => {
-  if (key.includes("bedroom")) return <BedOutlinedIcon />;
-  if (key.includes("bathroom")) return <BathtubOutlinedIcon />;
-  if (key.includes("area") || key.includes("sqft")) return <SquareFootOutlinedIcon />;
-  if (key.includes("parking")) return <LocalParkingOutlinedIcon />;
-  if (key.includes("furnishing")) return <ChairOutlinedIcon />;
-  if (key.includes("floor")) return <StairsOutlinedIcon />;
-  if (key.includes("cent") || key.includes("plot")) return <LandscapeOutlinedIcon />;
-  if (key.includes("commercial")) return <StorefrontOutlinedIcon />;
-  if (key.includes("road")) return <RouteOutlinedIcon />;
+  const getDetailIcon = (key) => {
+    if (key.includes("bedroom")) return <BedOutlinedIcon />;
+    if (key.includes("bathroom")) return <BathtubOutlinedIcon />;
+    if (key.includes("area") || key.includes("sqft"))
+      return <SquareFootOutlinedIcon />;
+    if (key.includes("parking")) return <LocalParkingOutlinedIcon />;
+    if (key.includes("furnishing")) return <ChairOutlinedIcon />;
+    if (key.includes("floor")) return <StairsOutlinedIcon />;
+    if (key.includes("cent") || key.includes("plot"))
+      return <LandscapeOutlinedIcon />;
+    if (key.includes("commercial")) return <StorefrontOutlinedIcon />;
+    if (key.includes("road")) return <RouteOutlinedIcon />;
 
-  return <HomeWorkOutlinedIcon />;
-};
+    return <HomeWorkOutlinedIcon />;
+  };
 
-const detailOrder = [
-  "bedrooms",
-  "bathrooms",
-  "area_sqft",
-  "builtup_area_sqft",
-  "total_cent",
-  "price_per_cent",
-  "floor_number",
-  "total_floors",
-  "total_rooms",
-  "floors",
-  "parking",
-  "furnishing",
-  "road_access",
-  "plot_type",
-  "commercial_type",
-];
+  const detailOrder = [
+    "bedrooms",
+    "bathrooms",
+    "area_sqft",
+    "builtup_area_sqft",
+    "total_cent",
+    "price_per_cent",
+    "floor_number",
+    "total_floors",
+    "total_rooms",
+    "floors",
+    "parking",
+    "furnishing",
+    "road_access",
+    "plot_type",
+    "commercial_type",
+  ];
 
-const detailEntries = Object.entries(property.details || {})
-  .filter(([, value]) => value !== "" && value !== null && value !== undefined)
-  .sort(([keyA], [keyB]) => {
-    const indexA = detailOrder.indexOf(keyA);
-    const indexB = detailOrder.indexOf(keyB);
+  const detailEntries = Object.entries(property.details || {})
+    .filter(
+      ([, value]) => value !== "" && value !== null && value !== undefined,
+    )
+    .sort(([keyA], [keyB]) => {
+      const indexA = detailOrder.indexOf(keyA);
+      const indexB = detailOrder.indexOf(keyB);
 
-    return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
-  });
+      return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+    });
 
+  const overviewItems = detailEntries.slice(0, 3);
 
-const overviewItems = detailEntries.slice(0, 3);
-
-const agentFact = {
-  label: "Agent:",
-  value: property.agent_name,
-  icon: <PersonOutlineOutlinedIcon />,
-};
+  const agentFact = {
+    label: "Agent:",
+    value: property.agent_name,
+    icon: <PersonOutlineOutlinedIcon />,
+  };
 
   return (
     <>
@@ -531,58 +531,66 @@ const agentFact = {
                     }}
                   >
                     {overviewItems.length > 0 ? (
-  overviewItems.map(([key, value]) => (
-    <Box
-      key={key}
-      sx={{
-        p: 2,
-        borderRadius: 3,
-        bgcolor: "#f8fafc",
-        border: "1px solid #e2e8f0",
-      }}
-    >
-      {/* <Box sx={{ color: "#059669", mb: 1 }}>
+                      overviewItems.map(([key, value]) => (
+                        <Box
+                          key={key}
+                          sx={{
+                            p: 2,
+                            borderRadius: 3,
+                            bgcolor: "#f8fafc",
+                            border: "1px solid #e2e8f0",
+                          }}
+                        >
+                          {/* <Box sx={{ color: "#059669", mb: 1 }}>
         <HomeWorkOutlinedIcon />
       </Box> */}
-      <Box sx={{ color: "#059669", mb: 1 }}>
-  {getDetailIcon(key)}
-</Box>
+                          <Box sx={{ color: "#059669", mb: 1 }}>
+                            {getDetailIcon(key)}
+                          </Box>
 
-      <Typography
-        color="#64748b"
-        fontSize={13}
-        fontWeight={700}
-      >
-        {formatLabel(key)}
-      </Typography>
+                          <Typography
+                            color="#64748b"
+                            fontSize={13}
+                            fontWeight={700}
+                          >
+                            {formatLabel(key)}
+                          </Typography>
 
-      <Typography color="#0f172a" fontWeight={900}>
-        {formatDetailValue(key, value)}
-      </Typography>
-    </Box>
-  ))
-) : (
-  <Box
-    sx={{
-      p: 2,
-      borderRadius: 3,
-      bgcolor: "#f8fafc",
-      border: "1px solid #e2e8f0",
-    }}
-  >
-    <Box sx={{ color: "#059669", mb: 1 }}>
-      <HomeWorkOutlinedIcon />
-    </Box>
+                          <Typography color="#0f172a" fontWeight={900}>
+                            {formatDetailValue(key, value)}
+                          </Typography>
+                        </Box>
+                      ))
+                    ) : (
+                      <Box
+                        sx={{
+                          p: 2,
+                          borderRadius: 3,
+                          bgcolor: "#f8fafc",
+                          border: "1px solid #e2e8f0",
+                        }}
+                      >
+                        <Box sx={{ color: "#059669", mb: 1 }}>
+                          <HomeWorkOutlinedIcon />
+                        </Box>
 
-    <Typography color="#64748b" fontSize={13} fontWeight={700}>
-      Property Type
-    </Typography>
+                        <Typography
+                          color="#64748b"
+                          fontSize={13}
+                          fontWeight={700}
+                        >
+                          Property Type
+                        </Typography>
 
-    <Typography color="#0f172a" fontWeight={900} sx={{ textTransform: "capitalize" }}>
-      {property.property_type}
-    </Typography>
-  </Box>
-)}
+                        <Typography
+                          color="#0f172a"
+                          fontWeight={900}
+                          sx={{ textTransform: "capitalize" }}
+                        >
+                          {property.property_type}
+                        </Typography>
+                      </Box>
+                    )}
                   </Box>
 
                   <Divider sx={{ my: 3 }} />
@@ -655,56 +663,66 @@ const agentFact = {
                   <Divider sx={{ my: 3 }} />
 
                   <Stack spacing={2.2}>
-                   {detailEntries.map(([key, value]) => (
-  <Stack
-    key={key}
-    direction="row"
-    justifyContent="space-between"
-    alignItems="center"
-    spacing={2}
-  >
-    <Stack direction="row" spacing={1.2} alignItems="center">
-      {/* <Box sx={{ color: "#059669", display: "flex" }}>
+                    {detailEntries.map(([key, value]) => (
+                      <Stack
+                        key={key}
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        spacing={2}
+                      >
+                        <Stack
+                          direction="row"
+                          spacing={1.2}
+                          alignItems="center"
+                        >
+                          {/* <Box sx={{ color: "#059669", display: "flex" }}>
         <HomeWorkOutlinedIcon fontSize="small" />
       </Box> */}
-      <Box sx={{ color: "#059669", display: "flex" }}>
-  {getDetailIcon(key)}
-</Box>
+                          <Box sx={{ color: "#059669", display: "flex" }}>
+                            {getDetailIcon(key)}
+                          </Box>
 
-      <Typography color="#64748b">
-        {formatLabel(key)}:
-      </Typography>
-    </Stack>
+                          <Typography color="#64748b">
+                            {formatLabel(key)}:
+                          </Typography>
+                        </Stack>
 
-    <Typography
-      fontWeight={900}
-      color="#0f172a"
-      textAlign="right"
-      sx={{ textTransform: "capitalize" }}
-    >
-      {formatDetailValue(key, value)}
-    </Typography>
-  </Stack>
-))}
+                        <Typography
+                          fontWeight={900}
+                          color="#0f172a"
+                          textAlign="right"
+                          sx={{ textTransform: "capitalize" }}
+                        >
+                          {formatDetailValue(key, value)}
+                        </Typography>
+                      </Stack>
+                    ))}
 
-<Stack
-  direction="row"
-  justifyContent="space-between"
-  alignItems="center"
-  spacing={2}
->
-  <Stack direction="row" spacing={1.2} alignItems="center">
-    <Box sx={{ color: "#059669", display: "flex" }}>
-      {agentFact.icon}
-    </Box>
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      spacing={2}
+                    >
+                      <Stack direction="row" spacing={1.2} alignItems="center">
+                        <Box sx={{ color: "#059669", display: "flex" }}>
+                          {agentFact.icon}
+                        </Box>
 
-    <Typography color="#64748b">{agentFact.label}</Typography>
-  </Stack>
+                        <Typography color="#64748b">
+                          {agentFact.label}
+                        </Typography>
+                      </Stack>
 
-  <Typography fontWeight={900} color="#0f172a" textAlign="right">
-    {agentFact.value}
-  </Typography>
-</Stack>
+                      <Typography
+                        fontWeight={900}
+                        color="#0f172a"
+                        textAlign="right"
+                      >
+                        {agentFact.value}
+                      </Typography>
+                    </Stack>
                   </Stack>
                 </CardContent>
               </Card>

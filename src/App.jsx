@@ -81,13 +81,13 @@ function App() {
         }
       />
       <Route
-  path="/payment-history"
-  element={
-    <AgentRoute>
-      <PaymentHistory />
-    </AgentRoute>
-  }
-/>
+        path="/payment-history"
+        element={
+          <AgentRoute>
+            <PaymentHistory />
+          </AgentRoute>
+        }
+      />
     </Routes>
   );
 }
