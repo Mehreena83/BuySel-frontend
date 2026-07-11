@@ -585,10 +585,6 @@ function Home() {
                     sx={{ mt: 2, gap: 1, flexWrap: "wrap" }}
                   >
                     <Chip label={property.property_type} size="small" />
-                    <Chip
-                      label={`${property.area_sqft || 0} sqft`}
-                      size="small"
-                    />
                   </Stack>
 
                   <Button
