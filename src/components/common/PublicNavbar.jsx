@@ -115,22 +115,26 @@ function PublicNavbar() {
                     position: "relative",
                     py: 2.7,
                     transition: "0.2s ease",
+
                     "&::after": {
                       content: '""',
                       position: "absolute",
-                      left: 0,
-                      right: 0,
+                      left: "50%",
                       bottom: 14,
+                      width: isActive(item.path) ? "22px" : "0px",
                       height: 2.5,
                       borderRadius: 10,
-                      bgcolor: isActive(item.path) ? "#059669" : "transparent",
+                      bgcolor: "#059669",
+                      transform: "translateX(-50%)",
                       transition: "0.2s ease",
                     },
+
                     "&:hover": {
                       color: "#065f46",
                     },
+
                     "&:hover::after": {
-                      bgcolor: "#059669",
+                      width: "22px",
                     },
                   }}
                 >
