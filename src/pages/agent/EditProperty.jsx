@@ -123,6 +123,7 @@ const propertyDetailFields = {
     },
   ],
 };
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
 
 const getImageUrl = (image) => {
@@ -225,6 +226,7 @@ function EditProperty() {
       [name]: files ? files[0] : value,
     });
   };
+
   const handleDetailsChange = (e) => {
     const { name, value } = e.target;
 
@@ -301,6 +303,7 @@ function EditProperty() {
     if (formData.main_image) {
       data.append("main_image", formData.main_image);
     }
+
     const selectedGalleryImages = formData.gallery_images.filter(
       (image) => image,
     );
@@ -308,6 +311,7 @@ function EditProperty() {
     selectedGalleryImages.forEach((image) => {
       data.append("gallery_images", image);
     });
+
     try {
       await axiosInstance.put(`/properties/my-properties/${id}/`, data, {
         headers: {
@@ -637,344 +641,326 @@ function EditProperty() {
 
                   <Divider />
 
-                  {/* <Box>
-                    <SectionTitle>Property Image</SectionTitle>
-
-                    {oldImage && (
-                      <Box sx={{ mb: 2 }}>
-                        <Typography
-                          color="#475467"
-                          fontSize={14}
-                          fontWeight={700}
-                          sx={{ mb: 1 }}
-                        >
-                          Current Image
-                        </Typography>
-
-                        <Box
-                          component="img"
-                          src={getImageUrl(oldImage)}
-                          alt="Current property"
-                          sx={{
-                            width: "100%",
-                            maxHeight: 260,
-                            objectFit: "cover",
-                            borderRadius: 3,
-                            border: "1px solid #e5e7eb",
-                          }}
-                        />
-                      </Box>
-                    )}
+                  <Box>
+                    <SectionTitle>Property Images</SectionTitle>
 
                     <Box
                       sx={{
-                        border: "1px dashed #bbf7d0",
+                        border: "1px solid #e5e7eb",
                         borderRadius: 3,
-                        bgcolor: "#f0fdf4",
-                        p: 2.5,
-                        textAlign: "center",
+                        bgcolor: "#ffffff",
+                        p: { xs: 1.8, sm: 2 },
                       }}
                     >
-                      <Button
-                        variant="outlined"
-                        component="label"
-                        startIcon={<CloudUploadOutlinedIcon />}
+                      <Typography
                         sx={{
+                          color: "#667085",
+                          fontSize: 13.5,
+                          mb: 2,
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        Upload new images only if you want to replace or add
+                        images. Leave empty to keep old images.
+                      </Typography>
+
+                      {oldImage && (
+                        <Box
+                          sx={{
+                            p: { xs: 1.4, sm: 1.6 },
+                            borderRadius: 2,
+                            border: "1px solid #e5e7eb",
+                            bgcolor: "#f8fafc",
+                            mb: 1.2,
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: "#1f2937",
+                              mb: 1,
+                            }}
+                          >
+                            Current Main Image
+                          </Typography>
+
+                          <Box
+                            component="img"
+                            src={getImageUrl(oldImage)}
+                            alt="Current property"
+                            sx={{
+                              width: "100%",
+                              height: { xs: 190, sm: 240 },
+                              objectFit: "cover",
+                              borderRadius: 2,
+                              border: "1px solid #e5e7eb",
+                            }}
+                          />
+                        </Box>
+                      )}
+
+                      {oldGalleryImages.length > 0 && (
+                        <Box
+                          sx={{
+                            p: { xs: 1.4, sm: 1.6 },
+                            borderRadius: 2,
+                            border: "1px solid #e5e7eb",
+                            bgcolor: "#f8fafc",
+                            mb: 1.2,
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: "#1f2937",
+                              mb: 1,
+                            }}
+                          >
+                            Current Gallery Images
+                          </Typography>
+
+                          <Box
+                            sx={{
+                              display: "grid",
+                              gridTemplateColumns: {
+                                xs: "repeat(2, 1fr)",
+                                sm: "repeat(4, 1fr)",
+                              },
+                              gap: 1.2,
+                            }}
+                          >
+                            {oldGalleryImages.map((item) => (
+                              <Box
+                                key={item.id}
+                                component="img"
+                                src={getImageUrl(item.image)}
+                                alt="Gallery"
+                                sx={{
+                                  width: "100%",
+                                  height: 90,
+                                  objectFit: "cover",
+                                  borderRadius: 2,
+                                  border: "1px solid #e5e7eb",
+                                }}
+                              />
+                            ))}
+                          </Box>
+                        </Box>
+                      )}
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: { xs: "column", sm: "row" },
+                          alignItems: { xs: "stretch", sm: "center" },
+                          justifyContent: "space-between",
+                          gap: { xs: 1.2, sm: 1.5 },
+                          p: { xs: 1.4, sm: 1.6 },
+                          borderRadius: 2,
+                          border: "1px solid #e5e7eb",
+                          bgcolor: "#f0fdf4",
+                          mb: 1.2,
+                        }}
+                      >
+                        <Box sx={{ minWidth: 0, flex: 1 }}>
+                          <Typography
+                            sx={{
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: "#1f2937",
+                            }}
+                          >
+                            New Main Image
+                          </Typography>
+
+                          <Typography
+                            sx={{
+                              color: formData.main_image
+                                ? "#475467"
+                                : "#98a2b3",
+                              fontSize: 12.5,
+                              mt: 0.3,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {formData.main_image
+                              ? formData.main_image.name
+                              : "No image selected"}
+                          </Typography>
+                        </Box>
+
+                        <Button
+                          component="label"
+                          size="small"
+                          startIcon={<CloudUploadOutlinedIcon />}
+                          sx={{
+                            minWidth: 92,
+                            borderRadius: 2,
+                            textTransform: "none",
+                            fontWeight: 500,
+                            color: "#047857",
+                            bgcolor: "#ffffff",
+                            border: "1px solid #bbf7d0",
+                            px: 1.6,
+                            "& .MuiButton-startIcon": { mr: 0.6 },
+                            "& .MuiButton-startIcon svg": {
+                              fontSize: "17px",
+                            },
+                            "&:hover": {
+                              bgcolor: "#ecfdf5",
+                              borderColor: "#86efac",
+                            },
+                          }}
+                        >
+                          Upload
+                          <input
+                            type="file"
+                            name="main_image"
+                            hidden
+                            accept="image/*"
+                            onChange={handleChange}
+                          />
+                        </Button>
+                      </Box>
+
+                      <Stack spacing={1.2}>
+                        {formData.gallery_images.map((image, index) => (
+                          <Box
+                            key={index}
+                            sx={{
+                              display: "flex",
+                              flexDirection: { xs: "column", sm: "row" },
+                              alignItems: { xs: "stretch", sm: "center" },
+                              justifyContent: "space-between",
+                              gap: { xs: 1.2, sm: 1.5 },
+                              p: { xs: 1.4, sm: 1.6 },
+                              borderRadius: 2,
+                              border: "1px solid #e5e7eb",
+                              bgcolor: "#f8fafc",
+                            }}
+                          >
+                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                              <Typography
+                                sx={{
+                                  fontSize: 14,
+                                  fontWeight: 600,
+                                  color: "#1f2937",
+                                }}
+                              >
+                                New Gallery Image {index + 1}
+                              </Typography>
+
+                              <Typography
+                                sx={{
+                                  color: image ? "#475467" : "#98a2b3",
+                                  fontSize: 12.5,
+                                  mt: 0.3,
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {image ? image.name : "No image selected"}
+                              </Typography>
+                            </Box>
+
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              sx={{
+                                flexShrink: 0,
+                                justifyContent: {
+                                  xs: "flex-end",
+                                  sm: "flex-start",
+                                },
+                                width: { xs: "100%", sm: "auto" },
+                              }}
+                            >
+                              <Button
+                                component="label"
+                                size="small"
+                                startIcon={<CloudUploadOutlinedIcon />}
+                                sx={{
+                                  minWidth: 92,
+                                  borderRadius: 2,
+                                  textTransform: "none",
+                                  fontWeight: 500,
+                                  color: "#047857",
+                                  bgcolor: "#ffffff",
+                                  border: "1px solid #bbf7d0",
+                                  px: 1.6,
+                                  "& .MuiButton-startIcon": { mr: 0.6 },
+                                  "& .MuiButton-startIcon svg": {
+                                    fontSize: "17px",
+                                  },
+                                  "&:hover": {
+                                    bgcolor: "#ecfdf5",
+                                    borderColor: "#86efac",
+                                  },
+                                }}
+                              >
+                                Upload
+                                <input
+                                  type="file"
+                                  name="gallery_images"
+                                  hidden
+                                  accept="image/*"
+                                  onChange={(e) => handleChange(e, index)}
+                                />
+                              </Button>
+
+                              {formData.gallery_images.length > 1 && (
+                                <Button
+                                  type="button"
+                                  size="small"
+                                  onClick={() => removeGalleryImageField(index)}
+                                  sx={{
+                                    minWidth: 36,
+                                    borderRadius: 2,
+                                    color: "#dc2626",
+                                    bgcolor: "#ffffff",
+                                    border: "1px solid #fecaca",
+                                    fontWeight: 600,
+                                    "&:hover": {
+                                      bgcolor: "#fef2f2",
+                                      borderColor: "#fca5a5",
+                                    },
+                                  }}
+                                >
+                                  ×
+                                </Button>
+                              )}
+                            </Stack>
+                          </Box>
+                        ))}
+                      </Stack>
+
+                      <Button
+                        type="button"
+                        onClick={addGalleryImageField}
+                        sx={{
+                          mt: 1.8,
+                          width: "100%",
                           py: 1.1,
-                          px: 3,
                           borderRadius: 2,
                           textTransform: "none",
-                          fontWeight: 700,
+                          fontWeight: 500,
                           color: "#047857",
-                          borderColor: "#bbf7d0",
-                          bgcolor: "#ffffff",
+                          bgcolor: "#f0fdf4",
+                          border: "1px dashed #86efac",
                           "&:hover": {
-                            bgcolor: "#ecfdf5",
-                            borderColor: "#86efac",
+                            bgcolor: "#dcfce7",
                           },
                         }}
                       >
-                        Upload New Image
-                        <input
-                          type="file"
-                          name="main_image"
-                          hidden
-                          accept="image/*"
-                          onChange={handleChange}
-                        />
+                        + Add another image
                       </Button>
-
-                      <Typography
-                        color="#667085"
-                        fontSize={13}
-                        sx={{ mt: 1.2 }}
-                      >
-                        Leave empty to keep current image. PNG, JPG or JPEG
-                        image supported.
-                      </Typography>
-
-                      {formData.main_image && (
-                        <Typography
-                          color="#344054"
-                          fontSize={14}
-                          fontWeight={700}
-                          sx={{
-                            mt: 1,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Selected: {formData.main_image.name}
-                        </Typography>
-                      )}
                     </Box>
-                  </Box> */}
-
-                  <Box>
-  <SectionTitle>Property Images</SectionTitle>
-
-  {oldImage && (
-    <Box sx={{ mb: 2 }}>
-      <Typography color="#475467" fontSize={14} fontWeight={700} sx={{ mb: 1 }}>
-        Current Main Image
-      </Typography>
-
-      <Box
-        component="img"
-        src={getImageUrl(oldImage)}
-        alt="Current property"
-        sx={{
-          width: "100%",
-          maxHeight: 260,
-          objectFit: "cover",
-          borderRadius: 3,
-          border: "1px solid #e5e7eb",
-        }}
-      />
-    </Box>
-  )}
-
-  {oldGalleryImages.length > 0 && (
-    <Box sx={{ mb: 2 }}>
-      <Typography color="#475467" fontSize={14} fontWeight={700} sx={{ mb: 1 }}>
-        Current Gallery Images
-      </Typography>
-
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "repeat(2, 1fr)",
-            sm: "repeat(4, 1fr)",
-          },
-          gap: 1.2,
-        }}
-      >
-        {oldGalleryImages.map((item) => (
-          <Box
-            key={item.id}
-            component="img"
-            src={getImageUrl(item.image)}
-            alt="Gallery"
-            sx={{
-              width: "100%",
-              height: 95,
-              objectFit: "cover",
-              borderRadius: 2,
-              border: "1px solid #e5e7eb",
-            }}
-          />
-        ))}
-      </Box>
-    </Box>
-  )}
-
-  <Box
-    sx={{
-      border: "1px solid #e5e7eb",
-      borderRadius: 3,
-      bgcolor: "#ffffff",
-      p: { xs: 1.8, sm: 2 },
-    }}
-  >
-    <Typography
-      sx={{
-        color: "#667085",
-        fontSize: 13.5,
-        mb: 2,
-        lineHeight: 1.6,
-      }}
-    >
-      Upload a new main image or add more gallery images. Leave empty to keep old images.
-    </Typography>
-
-    <Box
-      sx={{
-        p: 1.6,
-        borderRadius: 2,
-        border: "1px solid #d1fae5",
-        bgcolor: "#f0fdf4",
-        mb: 1.5,
-      }}
-    >
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        justifyContent="space-between"
-        alignItems={{ xs: "stretch", sm: "center" }}
-        spacing={1.5}
-      >
-        <Box>
-          <Typography fontWeight={700} color="#1f2937" fontSize={14}>
-            New Main Image
-          </Typography>
-
-          <Typography color="#667085" fontSize={12.5} sx={{ mt: 0.3 }}>
-            {formData.main_image ? formData.main_image.name : "No image selected"}
-          </Typography>
-        </Box>
-
-        <Button
-          component="label"
-          size="small"
-          startIcon={<CloudUploadOutlinedIcon />}
-          sx={{
-            borderRadius: 2,
-            textTransform: "none",
-            fontWeight: 600,
-            color: "#047857",
-            bgcolor: "#ffffff",
-            border: "1px solid #bbf7d0",
-            "&:hover": {
-              bgcolor: "#ecfdf5",
-              borderColor: "#86efac",
-            },
-          }}
-        >
-          Upload
-          <input
-            type="file"
-            name="main_image"
-            hidden
-            accept="image/*"
-            onChange={handleChange}
-          />
-        </Button>
-      </Stack>
-    </Box>
-
-    <Stack spacing={1.2}>
-      {formData.gallery_images.map((image, index) => (
-        <Box
-          key={index}
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            alignItems: { xs: "stretch", sm: "center" },
-            justifyContent: "space-between",
-            gap: 1.5,
-            p: 1.6,
-            borderRadius: 2,
-            border: "1px solid #e5e7eb",
-            bgcolor: "#f8fafc",
-          }}
-        >
-          <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography fontWeight={700} color="#1f2937" fontSize={14}>
-              New Gallery Image {index + 1}
-            </Typography>
-
-            <Typography
-              sx={{
-                color: image ? "#475467" : "#98a2b3",
-                fontSize: 12.5,
-                mt: 0.3,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {image ? image.name : "No image selected"}
-            </Typography>
-          </Box>
-
-          <Stack direction="row" spacing={1}>
-            <Button
-              component="label"
-              size="small"
-              startIcon={<CloudUploadOutlinedIcon />}
-              sx={{
-                minWidth: 92,
-                borderRadius: 2,
-                textTransform: "none",
-                fontWeight: 600,
-                color: "#047857",
-                bgcolor: "#ffffff",
-                border: "1px solid #bbf7d0",
-                "&:hover": {
-                  bgcolor: "#ecfdf5",
-                  borderColor: "#86efac",
-                },
-              }}
-            >
-              Upload
-              <input
-                type="file"
-                name="gallery_images"
-                hidden
-                accept="image/*"
-                onChange={(e) => handleChange(e, index)}
-              />
-            </Button>
-
-            {formData.gallery_images.length > 1 && (
-              <Button
-                type="button"
-                size="small"
-                onClick={() => removeGalleryImageField(index)}
-                sx={{
-                  minWidth: 36,
-                  borderRadius: 2,
-                  color: "#dc2626",
-                  bgcolor: "#ffffff",
-                  border: "1px solid #fecaca",
-                  fontWeight: 700,
-                  "&:hover": {
-                    bgcolor: "#fef2f2",
-                    borderColor: "#fca5a5",
-                  },
-                }}
-              >
-                ×
-              </Button>
-            )}
-          </Stack>
-        </Box>
-      ))}
-    </Stack>
-
-    <Button
-      type="button"
-      onClick={addGalleryImageField}
-      sx={{
-        mt: 1.8,
-        width: "100%",
-        py: 1.1,
-        borderRadius: 2,
-        textTransform: "none",
-        fontWeight: 600,
-        color: "#047857",
-        bgcolor: "#f0fdf4",
-        border: "1px dashed #86efac",
-        "&:hover": {
-          bgcolor: "#dcfce7",
-        },
-      }}
-    >
-      + Add another gallery image
-    </Button>
-  </Box>
-</Box>
+                  </Box>
 
                   <Box
                     sx={{

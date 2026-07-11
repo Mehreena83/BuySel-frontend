@@ -21,6 +21,12 @@ import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
 import BedOutlinedIcon from "@mui/icons-material/BedOutlined";
 import BathtubOutlinedIcon from "@mui/icons-material/BathtubOutlined";
 import SquareFootOutlinedIcon from "@mui/icons-material/SquareFootOutlined";
+import LocalParkingOutlinedIcon from "@mui/icons-material/LocalParkingOutlined";
+import ChairOutlinedIcon from "@mui/icons-material/ChairOutlined";
+import StairsOutlinedIcon from "@mui/icons-material/StairsOutlined";
+import LandscapeOutlinedIcon from "@mui/icons-material/LandscapeOutlined";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
+import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import axiosInstance from "../../api/axiosInstance";
@@ -221,9 +227,47 @@ const formatDetailValue = (key, value) => {
   return value;
 };
 
-const detailEntries = Object.entries(property.details || {}).filter(
-  ([, value]) => value !== "" && value !== null && value !== undefined,
-);
+const getDetailIcon = (key) => {
+  if (key.includes("bedroom")) return <BedOutlinedIcon />;
+  if (key.includes("bathroom")) return <BathtubOutlinedIcon />;
+  if (key.includes("area") || key.includes("sqft")) return <SquareFootOutlinedIcon />;
+  if (key.includes("parking")) return <LocalParkingOutlinedIcon />;
+  if (key.includes("furnishing")) return <ChairOutlinedIcon />;
+  if (key.includes("floor")) return <StairsOutlinedIcon />;
+  if (key.includes("cent") || key.includes("plot")) return <LandscapeOutlinedIcon />;
+  if (key.includes("commercial")) return <StorefrontOutlinedIcon />;
+  if (key.includes("road")) return <RouteOutlinedIcon />;
+
+  return <HomeWorkOutlinedIcon />;
+};
+
+const detailOrder = [
+  "bedrooms",
+  "bathrooms",
+  "area_sqft",
+  "builtup_area_sqft",
+  "total_cent",
+  "price_per_cent",
+  "floor_number",
+  "total_floors",
+  "total_rooms",
+  "floors",
+  "parking",
+  "furnishing",
+  "road_access",
+  "plot_type",
+  "commercial_type",
+];
+
+const detailEntries = Object.entries(property.details || {})
+  .filter(([, value]) => value !== "" && value !== null && value !== undefined)
+  .sort(([keyA], [keyB]) => {
+    const indexA = detailOrder.indexOf(keyA);
+    const indexB = detailOrder.indexOf(keyB);
+
+    return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+  });
+
 
 const overviewItems = detailEntries.slice(0, 3);
 
@@ -497,9 +541,12 @@ const agentFact = {
         border: "1px solid #e2e8f0",
       }}
     >
-      <Box sx={{ color: "#059669", mb: 1 }}>
+      {/* <Box sx={{ color: "#059669", mb: 1 }}>
         <HomeWorkOutlinedIcon />
-      </Box>
+      </Box> */}
+      <Box sx={{ color: "#059669", mb: 1 }}>
+  {getDetailIcon(key)}
+</Box>
 
       <Typography
         color="#64748b"
@@ -617,9 +664,12 @@ const agentFact = {
     spacing={2}
   >
     <Stack direction="row" spacing={1.2} alignItems="center">
-      <Box sx={{ color: "#059669", display: "flex" }}>
+      {/* <Box sx={{ color: "#059669", display: "flex" }}>
         <HomeWorkOutlinedIcon fontSize="small" />
-      </Box>
+      </Box> */}
+      <Box sx={{ color: "#059669", display: "flex" }}>
+  {getDetailIcon(key)}
+</Box>
 
       <Typography color="#64748b">
         {formatLabel(key)}:
