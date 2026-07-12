@@ -134,8 +134,22 @@ function AddProperty() {
     price: "",
     location: "",
     address: "",
-    details: {},
-    property_images: [null],
+    bedrooms: "",
+bathrooms: "",
+area_sqft: "",
+total_rooms: "",
+floors: "",
+floor_number: "",
+total_floors: "",
+furnishing: "",
+parking: "",
+total_cent: "",
+price_per_cent: "",
+road_access: "",
+plot_type: "",
+commercial_type: "",
+builtup_area_sqft: "",
+property_images: [null],
   });
 
   const [snackbar, setSnackbar] = useState({
@@ -163,16 +177,31 @@ function AddProperty() {
 
       return;
     }
+if (name === "property_type") {
+  setFormData({
+    ...formData,
+    property_type: value,
 
-    if (name === "property_type") {
-      setFormData({
-        ...formData,
-        property_type: value,
-        details: {},
-      });
+    bedrooms: "",
+    bathrooms: "",
+    area_sqft: "",
+    total_rooms: "",
+    floors: "",
+    floor_number: "",
+    total_floors: "",
+    furnishing: "",
+    parking: "",
+    total_cent: "",
+    price_per_cent: "",
+    road_access: "",
+    plot_type: "",
+    commercial_type: "",
+    builtup_area_sqft: "",
+  });
 
-      return;
-    }
+  return;
+}
+
 
     setFormData({
       ...formData,
@@ -180,17 +209,14 @@ function AddProperty() {
     });
   };
 
-  const handleDetailsChange = (e) => {
-    const { name, value } = e.target;
+const handleDetailsChange = (e) => {
+  const { name, value } = e.target;
 
-    setFormData({
-      ...formData,
-      details: {
-        ...formData.details,
-        [name]: value,
-      },
-    });
-  };
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+};
 
   const addImageField = () => {
     setFormData({
@@ -212,8 +238,7 @@ function AddProperty() {
 
   const validateDetails = () => {
     for (const field of selectedDetailFields) {
-      const value = formData.details[field.name];
-
+const value = formData[field.name];
       if (field.type === "number" && value !== "" && value !== undefined) {
         if (Number(value) < 0) {
           return `${field.label} cannot be negative.`;
@@ -257,8 +282,13 @@ function AddProperty() {
       data.append("address", formData.address);
     }
 
-    data.append("details", JSON.stringify(formData.details));
+selectedDetailFields.forEach((field) => {
+  const value = formData[field.name];
 
+  if (value !== "" && value !== null && value !== undefined) {
+    data.append(field.name, value);
+  }
+});
     const selectedImages = formData.property_images.filter((image) => image);
 
     if (selectedImages.length > 0) {
@@ -548,7 +578,7 @@ function AddProperty() {
                             type={
                               field.type === "select" ? undefined : field.type
                             }
-                            value={formData.details[field.name] || ""}
+                            value={formData[field.name] || ""}
                             onChange={handleDetailsChange}
                             fullWidth
                             inputProps={

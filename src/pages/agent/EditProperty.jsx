@@ -144,9 +144,23 @@ function EditProperty() {
     price: "",
     location: "",
     address: "",
-    details: {},
-    main_image: null,
-    gallery_images: [null],
+bedrooms: "",
+bathrooms: "",
+area_sqft: "",
+total_rooms: "",
+floors: "",
+floor_number: "",
+total_floors: "",
+furnishing: "",
+parking: "",
+total_cent: "",
+price_per_cent: "",
+road_access: "",
+plot_type: "",
+commercial_type: "",
+builtup_area_sqft: "",
+main_image: null,
+gallery_images: [null],
   });
 
   const [oldImage, setOldImage] = useState("");
@@ -179,9 +193,23 @@ function EditProperty() {
           price: response.data.price || "",
           location: response.data.location || "",
           address: response.data.address || "",
-          details: response.data.details || {},
-          main_image: null,
-          gallery_images: [null],
+bedrooms: response.data.bedrooms || "",
+bathrooms: response.data.bathrooms || "",
+area_sqft: response.data.area_sqft || "",
+total_rooms: response.data.total_rooms || "",
+floors: response.data.floors || "",
+floor_number: response.data.floor_number || "",
+total_floors: response.data.total_floors || "",
+furnishing: response.data.furnishing || "",
+parking: response.data.parking || "",
+total_cent: response.data.total_cent || "",
+price_per_cent: response.data.price_per_cent || "",
+road_access: response.data.road_access || "",
+plot_type: response.data.plot_type || "",
+commercial_type: response.data.commercial_type || "",
+builtup_area_sqft: response.data.builtup_area_sqft || "",
+main_image: null,
+gallery_images: [null],
         });
 
         setOldImage(response.data.main_image || "");
@@ -211,15 +239,30 @@ function EditProperty() {
       return;
     }
 
-    if (name === "property_type") {
-      setFormData({
-        ...formData,
-        property_type: value,
-        details: {},
-      });
+if (name === "property_type") {
+  setFormData({
+    ...formData,
+    property_type: value,
 
-      return;
-    }
+    bedrooms: "",
+    bathrooms: "",
+    area_sqft: "",
+    total_rooms: "",
+    floors: "",
+    floor_number: "",
+    total_floors: "",
+    furnishing: "",
+    parking: "",
+    total_cent: "",
+    price_per_cent: "",
+    road_access: "",
+    plot_type: "",
+    commercial_type: "",
+    builtup_area_sqft: "",
+  });
+
+  return;
+}
 
     setFormData({
       ...formData,
@@ -227,17 +270,14 @@ function EditProperty() {
     });
   };
 
-  const handleDetailsChange = (e) => {
-    const { name, value } = e.target;
+const handleDetailsChange = (e) => {
+  const { name, value } = e.target;
 
-    setFormData({
-      ...formData,
-      details: {
-        ...formData.details,
-        [name]: value,
-      },
-    });
-  };
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+};
 
   const addGalleryImageField = () => {
     setFormData({
@@ -261,8 +301,7 @@ function EditProperty() {
     }
 
     for (const field of selectedDetailFields) {
-      const value = formData.details[field.name];
-
+const value = formData[field.name];
       if (field.type === "number" && value !== "" && value !== undefined) {
         if (Number(value) < 0) {
           return `${field.label} cannot be negative.`;
@@ -298,8 +337,13 @@ function EditProperty() {
     data.append("price", formData.price);
     data.append("location", formData.location);
     data.append("address", formData.address || "");
-    data.append("details", JSON.stringify(formData.details));
+selectedDetailFields.forEach((field) => {
+  const value = formData[field.name];
 
+  if (value !== "" && value !== null && value !== undefined) {
+    data.append(field.name, value);
+  }
+});
     if (formData.main_image) {
       data.append("main_image", formData.main_image);
     }
@@ -619,7 +663,7 @@ function EditProperty() {
                             type={
                               field.type === "select" ? undefined : field.type
                             }
-                            value={formData.details[field.name] || ""}
+value={formData[field.name] || ""}
                             onChange={handleDetailsChange}
                             fullWidth
                             inputProps={
