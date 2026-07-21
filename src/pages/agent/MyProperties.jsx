@@ -14,14 +14,15 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import axiosInstance from "../../api/axiosInstance";
 import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
+
+import axiosInstance from "../../api/axiosInstance";
 
 function MyProperties() {
   const [properties, setProperties] = useState([]);
@@ -39,6 +40,7 @@ function MyProperties() {
         const response = await axiosInstance.get("/properties/my-properties/");
         setProperties(response.data);
       } catch (err) {
+        console.error(err.response?.data || err.message);
         setError("Failed to load properties.");
       } finally {
         setLoading(false);
@@ -55,6 +57,38 @@ function MyProperties() {
     if (property.status === "rejected")
       return { label: "Rejected", color: "error" };
     return { label: "Pending", color: "warning" };
+  };
+
+  const getStatusChipStyle = (property) => {
+    if (property.is_expired) {
+      return {
+        bgcolor: "#fef3f2",
+        color: "#b42318",
+        border: "#fecdca",
+      };
+    }
+
+    if (property.status === "approved") {
+      return {
+        bgcolor: "#ecfdf3",
+        color: "#067647",
+        border: "#abefc6",
+      };
+    }
+
+    if (property.status === "rejected") {
+      return {
+        bgcolor: "#fef3f2",
+        color: "#b42318",
+        border: "#fecdca",
+      };
+    }
+
+    return {
+      bgcolor: "#fffaeb",
+      color: "#b54708",
+      border: "#fedf89",
+    };
   };
 
   const formatDate = (date) => {
@@ -121,6 +155,7 @@ function MyProperties() {
         prevProperties.filter((property) => property.id !== propertyId),
       );
     } catch (err) {
+      console.error(err.response?.data || err.message);
       setError("Failed to delete property.");
     }
   };
@@ -130,8 +165,10 @@ function MyProperties() {
       <Box
         sx={{
           minHeight: "100vh",
-          bgcolor: "#f8fafc",
+          bgcolor: "#f6f8fb",
           py: { xs: 3, md: 5 },
+          background:
+            "radial-gradient(circle at top left, rgba(15,118,110,0.12), transparent 28%), radial-gradient(circle at top right, rgba(16,185,129,0.10), transparent 32%), linear-gradient(135deg, #f8fafc 0%, #f5f7fb 50%, #eefdf7 100%)",
         }}
       >
         <Container maxWidth="lg">
@@ -140,23 +177,29 @@ function MyProperties() {
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: { xs: "stretch", sm: "center" },
+              alignItems: { xs: "flex-start", sm: "center" },
               gap: 2,
               mb: 4,
+              width: "100%",
             }}
           >
-            <Button
-              component={Link}
-              to="/dashboard"
-              startIcon={<ArrowBackIcon />}
-              sx={{
-                color: "#475467",
-                fontWeight: 600,
-                textTransform: "none",
-              }}
-            >
-              Back to Dashboard
-            </Button>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                variant="h4"
+                fontWeight={850}
+                color="#101828"
+                sx={{
+                  fontSize: { xs: 28, md: 34 },
+                  letterSpacing: "-0.8px",
+                }}
+              >
+                My Properties
+              </Typography>
+
+              <Typography color="#667085" sx={{ mt: 1, fontSize: 15 }}>
+                View and manage your submitted property listings.
+              </Typography>
+            </Box>
 
             <Button
               component={Link}
@@ -164,37 +207,27 @@ function MyProperties() {
               variant="contained"
               startIcon={<AddHomeWorkIcon />}
               sx={{
+                ml: { sm: "auto" },
+                flexShrink: 0,
                 bgcolor: "#065f46",
                 px: 2.5,
-                py: 1,
-                borderRadius: 2,
-                fontWeight: 700,
+                py: 1.05,
+                borderRadius: "14px",
+                fontWeight: 800,
                 textTransform: "none",
-                boxShadow: "none",
                 alignSelf: { xs: "flex-start", sm: "center" },
+                boxShadow:
+                  "0 14px 28px rgba(6,95,70,0.22), inset 0 1px 0 rgba(255,255,255,0.24)",
                 "&:hover": {
                   bgcolor: "#047857",
-                  boxShadow: "none",
+                  boxShadow:
+                    "0 18px 36px rgba(6,95,70,0.26), inset 0 1px 0 rgba(255,255,255,0.24)",
+                  transform: "translateY(-1px)",
                 },
               }}
             >
               Add Property
             </Button>
-          </Box>
-
-          <Box sx={{ mb: 4 }}>
-            <Typography
-              variant="h4"
-              fontWeight={700}
-              color="#1f2937"
-              sx={{ fontSize: { xs: 28, md: 34 } }}
-            >
-              My Properties
-            </Typography>
-
-            <Typography color="#667085" sx={{ mt: 1 }}>
-              View and manage your submitted property listings.
-            </Typography>
           </Box>
 
           {loading && (
@@ -204,7 +237,14 @@ function MyProperties() {
           )}
 
           {error && (
-            <Alert severity="error" sx={{ borderRadius: 2, mb: 3 }}>
+            <Alert
+              severity="error"
+              sx={{
+                borderRadius: "16px",
+                mb: 3,
+                border: "1px solid #fecdca",
+              }}
+            >
               {error}
             </Alert>
           )}
@@ -213,13 +253,38 @@ function MyProperties() {
             <Card
               elevation={0}
               sx={{
-                border: "1px solid #e5e7eb",
-                borderRadius: 3,
-                bgcolor: "#fff",
+                border: "1px dashed #d0d5dd",
+                borderRadius: "28px",
+                bgcolor: "rgba(255,255,255,0.92)",
+                backdropFilter: "blur(12px)",
+                boxShadow:
+                  "0 24px 54px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255,255,255,0.9)",
               }}
             >
               <CardContent sx={{ py: 8, textAlign: "center" }}>
-                <Typography variant="h6" fontWeight={700} color="#1f2937">
+                <Box
+                  sx={{
+                    width: 72,
+                    height: 72,
+                    mx: "auto",
+                    borderRadius: "24px",
+                    bgcolor: "#ecfdf5",
+                    color: "#0f766e",
+                    display: "grid",
+                    placeItems: "center",
+                    boxShadow:
+                      "0 18px 34px rgba(15,118,110,0.16), inset 0 1px 0 rgba(255,255,255,0.9)",
+                  }}
+                >
+                  <HomeWorkOutlinedIcon sx={{ fontSize: 36 }} />
+                </Box>
+
+                <Typography
+                  variant="h6"
+                  fontWeight={850}
+                  color="#1f2937"
+                  sx={{ mt: 2 }}
+                >
                   No properties added yet
                 </Typography>
 
@@ -234,11 +299,15 @@ function MyProperties() {
                   sx={{
                     bgcolor: "#065f46",
                     textTransform: "none",
-                    fontWeight: 700,
-                    borderRadius: 2,
+                    fontWeight: 800,
+                    borderRadius: "14px",
                     px: 3,
-                    boxShadow: "none",
-                    "&:hover": { bgcolor: "#047857", boxShadow: "none" },
+                    py: 1.05,
+                    boxShadow: "0 12px 24px rgba(6,95,70,0.18)",
+                    "&:hover": {
+                      bgcolor: "#047857",
+                      boxShadow: "0 14px 28px rgba(6,95,70,0.22)",
+                    },
                   }}
                 >
                   Add Your First Property
@@ -251,24 +320,59 @@ function MyProperties() {
             <Stack spacing={2}>
               {properties.map((property) => {
                 const status = getStatusChip(property);
+                const statusStyle = getStatusChipStyle(property);
                 const propertyImages = getPropertyImages(property);
                 const imageUrl = getImageUrl(propertyImages[0]);
+
                 return (
                   <Card
                     key={property.id}
                     elevation={0}
                     sx={{
-                      border: "1px solid #e5e7eb",
-                      borderRadius: 3,
-                      bgcolor: "#fff",
-                      transition: "0.2s ease",
+                      position: "relative",
+                      overflow: "hidden",
+                      border: "1px solid rgba(255,255,255,0.9)",
+                      borderRadius: "26px",
+                      bgcolor: "rgba(255,255,255,0.94)",
+                      backdropFilter: "blur(14px)",
+                      boxShadow:
+                        "0 18px 42px rgba(15, 23, 42, 0.07), inset 0 1px 0 rgba(255,255,255,0.9)",
+                      transition: "0.24s ease",
+                      "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        inset: 0,
+                        background:
+                          "linear-gradient(145deg, rgba(236,253,245,0.82) 0%, rgba(255,255,255,0.18) 42%, rgba(255,255,255,0) 100%)",
+                        pointerEvents: "none",
+                      },
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        width: 140,
+                        height: 140,
+                        borderRadius: "50%",
+                        right: -55,
+                        top: -55,
+                        bgcolor: "rgba(15, 118, 110, 0.07)",
+                        boxShadow: "0 0 55px rgba(15,118,110,0.1)",
+                        pointerEvents: "none",
+                      },
                       "&:hover": {
-                        borderColor: "#cbd5e1",
-                        boxShadow: "0 10px 28px rgba(15, 23, 42, 0.06)",
+                        borderColor: "#bbf7d0",
+                        boxShadow:
+                          "0 26px 58px rgba(15, 23, 42, 0.11), inset 0 1px 0 rgba(255,255,255,0.95)",
+                        transform: "translateY(-4px)",
                       },
                     }}
                   >
-                    <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+                    <CardContent
+                      sx={{
+                        position: "relative",
+                        zIndex: 1,
+                        p: { xs: 2.5, md: 3 },
+                      }}
+                    >
                       <Stack
                         direction={{ xs: "column", sm: "row" }}
                         spacing={2}
@@ -279,13 +383,15 @@ function MyProperties() {
                           sx={{
                             width: { xs: "100%", sm: 150 },
                             height: { xs: 180, sm: 120 },
-                            borderRadius: 2.5,
+                            borderRadius: "20px",
                             overflow: "hidden",
                             bgcolor: "#f1f5f9",
                             border: "1px solid #e5e7eb",
                             flexShrink: 0,
                             cursor: imageUrl ? "pointer" : "default",
                             position: "relative",
+                            boxShadow:
+                              "0 14px 28px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.9)",
                             "&:hover img": {
                               transform: "scale(1.04)",
                             },
@@ -309,25 +415,33 @@ function MyProperties() {
                               <Box
                                 sx={{
                                   position: "absolute",
-                                  left: 8,
-                                  bottom: 8,
-                                  px: 1,
-                                  py: 0.4,
-                                  borderRadius: 1.5,
-                                  bgcolor: "rgba(15, 23, 42, 0.65)",
+                                  left: 9,
+                                  bottom: 9,
+                                  px: 1.1,
+                                  py: 0.45,
+                                  borderRadius: "999px",
+                                  bgcolor: "rgba(15, 23, 42, 0.68)",
                                   color: "#ffffff",
                                   fontSize: 11.5,
-                                  fontWeight: 500,
+                                  fontWeight: 700,
+                                  backdropFilter: "blur(8px)",
+                                  boxShadow: "0 8px 18px rgba(15,23,42,0.22)",
                                 }}
                               >
                                 Click to view
                               </Box>
                             </>
                           ) : (
-                            <Stack alignItems="center" spacing={0.8}>
+                            <Stack
+                              alignItems="center"
+                              justifyContent="center"
+                              spacing={0.8}
+                              sx={{ height: "100%" }}
+                            >
                               <HomeWorkOutlinedIcon
                                 sx={{ color: "#98a2b3", fontSize: 36 }}
                               />
+
                               <Typography
                                 sx={{ color: "#98a2b3", fontSize: 13 }}
                               >
@@ -347,8 +461,14 @@ function MyProperties() {
                           <Box sx={{ flex: 1, minWidth: 0 }}>
                             <Typography
                               variant="h6"
-                              fontWeight={700}
-                              color="#1f2937"
+                              fontWeight={850}
+                              color="#101828"
+                              sx={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                letterSpacing: "-0.3px",
+                              }}
                             >
                               {property.title}
                             </Typography>
@@ -360,7 +480,16 @@ function MyProperties() {
                               sx={{ mt: 1, color: "#667085" }}
                             >
                               <LocationOnOutlinedIcon sx={{ fontSize: 18 }} />
-                              <Typography variant="body2">
+
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  fontWeight: 600,
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
                                 {property.location}
                               </Typography>
                             </Stack>
@@ -378,34 +507,27 @@ function MyProperties() {
                                 mt: 2.5,
                               }}
                             >
-                              <Typography variant="body2" color="#344054">
-                                <Box component="span" sx={{ fontWeight: 700 }}>
-                                  Price:
-                                </Box>{" "}
-                                ₹
-                                {Number(property.price).toLocaleString("en-IN")}
-                              </Typography>
+                              <InfoText
+                                label="Price"
+                                value={`₹${Number(
+                                  property.price || 0,
+                                ).toLocaleString("en-IN")}`}
+                              />
 
-                              <Typography variant="body2" color="#344054">
-                                <Box component="span" sx={{ fontWeight: 700 }}>
-                                  Type:
-                                </Box>{" "}
-                                {property.property_type}
-                              </Typography>
+                              <InfoText
+                                label="Type"
+                                value={property.property_type}
+                              />
 
-                              <Typography variant="body2" color="#344054">
-                                <Box component="span" sx={{ fontWeight: 700 }}>
-                                  Listing:
-                                </Box>{" "}
-                                {property.listing_type}
-                              </Typography>
+                              <InfoText
+                                label="Listing"
+                                value={property.listing_type}
+                              />
 
-                              <Typography variant="body2" color="#344054">
-                                <Box component="span" sx={{ fontWeight: 700 }}>
-                                  Expires:
-                                </Box>{" "}
-                                {formatDate(property.expires_at)}
-                              </Typography>
+                              <InfoText
+                                label="Expires"
+                                value={formatDate(property.expires_at)}
+                              />
                             </Box>
                           </Box>
 
@@ -416,12 +538,16 @@ function MyProperties() {
                           >
                             <Chip
                               label={status.label}
-                              color={status.color}
                               size="small"
                               sx={{
-                                fontWeight: 700,
+                                bgcolor: statusStyle.bgcolor,
+                                color: statusStyle.color,
+                                border: `1px solid ${statusStyle.border}`,
+                                fontWeight: 850,
                                 textTransform: "capitalize",
-                                borderRadius: "8px",
+                                borderRadius: "999px",
+                                px: 0.6,
+                                minWidth: 86,
                               }}
                             />
 
@@ -435,14 +561,19 @@ function MyProperties() {
                                     size="small"
                                     startIcon={<EditOutlinedIcon />}
                                     sx={{
-                                      borderRadius: 2,
+                                      height: 38,
+                                      borderRadius: "13px",
                                       textTransform: "none",
-                                      fontWeight: 700,
+                                      fontWeight: 800,
                                       color: "#047857",
+                                      bgcolor: "#ffffff",
                                       borderColor: "#bbf7d0",
+                                      boxShadow:
+                                        "0 8px 18px rgba(15,118,110,0.08)",
                                       "&:hover": {
                                         borderColor: "#059669",
                                         bgcolor: "#ecfdf5",
+                                        transform: "translateY(-1px)",
                                       },
                                     }}
                                   >
@@ -459,9 +590,16 @@ function MyProperties() {
                                   handleDeleteProperty(property.id)
                                 }
                                 sx={{
-                                  borderRadius: 2,
+                                  height: 38,
+                                  borderRadius: "13px",
                                   textTransform: "none",
-                                  fontWeight: 700,
+                                  fontWeight: 800,
+                                  bgcolor: "#ffffff",
+                                  boxShadow: "0 8px 18px rgba(180,35,24,0.06)",
+                                  "&:hover": {
+                                    bgcolor: "#fef3f2",
+                                    transform: "translateY(-1px)",
+                                  },
                                 }}
                               >
                                 Delete
@@ -486,9 +624,10 @@ function MyProperties() {
         fullWidth
         PaperProps={{
           sx: {
-            borderRadius: 3,
+            borderRadius: "26px",
             overflow: "hidden",
             bgcolor: "#ffffff",
+            boxShadow: "0 28px 80px rgba(15,23,42,0.22)",
           },
         }}
       >
@@ -497,15 +636,27 @@ function MyProperties() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            p: 1.2,
+            p: 1.4,
             borderBottom: "1px solid #e5e7eb",
+            background: "linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)",
           }}
         >
-          <Typography sx={{ fontWeight: 600, color: "#1f2937", fontSize: 14 }}>
+          <Typography sx={{ fontWeight: 850, color: "#1f2937", fontSize: 15 }}>
             Property Images
           </Typography>
 
-          <IconButton onClick={() => setImagePopupOpen(false)} size="small">
+          <IconButton
+            onClick={() => setImagePopupOpen(false)}
+            size="small"
+            sx={{
+              bgcolor: "#ffffff",
+              border: "1px solid #e5e7eb",
+              boxShadow: "0 8px 18px rgba(15,23,42,0.08)",
+              "&:hover": {
+                bgcolor: "#ecfdf5",
+              },
+            }}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
@@ -525,9 +676,10 @@ function MyProperties() {
               height: { xs: 300, md: 480 },
               objectFit: "contain",
               display: "block",
-              borderRadius: 2,
+              borderRadius: "20px",
               bgcolor: "#ffffff",
               border: "1px solid #e5e7eb",
+              boxShadow: "0 14px 32px rgba(15,23,42,0.08)",
             }}
           />
 
@@ -552,7 +704,7 @@ function MyProperties() {
                     width: 78,
                     height: 58,
                     flexShrink: 0,
-                    borderRadius: 1.5,
+                    borderRadius: "14px",
                     overflow: "hidden",
                     cursor: "pointer",
                     border:
@@ -561,6 +713,10 @@ function MyProperties() {
                         : "1px solid #d0d5dd",
                     bgcolor: "#ffffff",
                     position: "relative",
+                    boxShadow:
+                      selectedImageIndex === index
+                        ? "0 10px 24px rgba(5,150,105,0.16)"
+                        : "none",
                   }}
                 >
                   <Box
@@ -583,11 +739,11 @@ function MyProperties() {
                         bottom: 4,
                         px: 0.6,
                         py: 0.15,
-                        borderRadius: 1,
+                        borderRadius: "999px",
                         bgcolor: "rgba(6, 95, 70, 0.9)",
                         color: "#ffffff",
                         fontSize: 9.5,
-                        fontWeight: 600,
+                        fontWeight: 700,
                       }}
                     >
                       Main
@@ -600,6 +756,25 @@ function MyProperties() {
         </Box>
       </Dialog>
     </>
+  );
+}
+
+function InfoText({ label, value }) {
+  return (
+    <Typography variant="body2" color="#344054">
+      <Box component="span" sx={{ fontWeight: 800 }}>
+        {label}:
+      </Box>{" "}
+      <Box
+        component="span"
+        sx={{
+          fontWeight: 600,
+          textTransform: "capitalize",
+        }}
+      >
+        {value || "N/A"}
+      </Box>
+    </Typography>
   );
 }
 

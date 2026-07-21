@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -14,12 +13,10 @@ import {
   Typography,
 } from "@mui/material";
 
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
 import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -30,12 +27,10 @@ import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 
 function Dashboard() {
-  const location = useLocation();
-
   const user = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem("user")) || {};
@@ -108,41 +103,6 @@ function Dashboard() {
     month: "long",
     year: "numeric",
   });
-
-  const isActive = (path) => location.pathname === path;
-
-  const navItems = [
-    {
-      label: "Home",
-      path: "/",
-      icon: <HomeOutlinedIcon />,
-    },
-    {
-      label: "Dashboard",
-      path: "/dashboard",
-      icon: <DashboardOutlinedIcon />,
-    },
-    {
-      label: "Properties",
-      path: "/my-properties",
-      icon: <HomeWorkOutlinedIcon />,
-    },
-    {
-      label: "Plans",
-      path: "/plans",
-      icon: <WorkspacePremiumOutlinedIcon />,
-    },
-    {
-      label: "Orders",
-      path: "/payment-history",
-      icon: <ReceiptLongOutlinedIcon />,
-    },
-    {
-      label: "Inquiries",
-      path: "/my-inquiries",
-      icon: <MailOutlineOutlinedIcon />,
-    },
-  ];
 
   const statCards = [
     {
@@ -218,141 +178,7 @@ function Dashboard() {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f5f7fb", color: "#101828" }}>
-      <Box
-        component="header"
-        sx={{
-          bgcolor: "rgba(255,255,255,0.94)",
-          borderBottom: "1px solid #eaecf0",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          backdropFilter: "blur(14px)",
-        }}
-      >
-        <Container maxWidth="xl">
-          <Box
-            sx={{
-              minHeight: 76,
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-            }}
-          >
-            <Typography
-              component={Link}
-              to="/"
-              sx={{
-                textDecoration: "none",
-                fontSize: { xs: 25, md: 29 },
-                fontWeight: 900,
-                color: "#101828",
-                letterSpacing: "-1px",
-              }}
-            >
-              Buy
-              <Box component="span" sx={{ color: "#0f766e" }}>
-                Sel
-              </Box>
-            </Typography>
-
-            <Stack
-              direction="row"
-              spacing={2.1}
-              sx={{
-                ml: { md: 4 },
-                display: { xs: "none", lg: "flex" },
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
-              {navItems.map((item) => (
-                <Button
-                  key={item.path}
-                  component={Link}
-                  to={item.path}
-                  startIcon={item.icon}
-                  sx={navButtonStyle(isActive(item.path))}
-                >
-                  {item.label}
-                </Button>
-              ))}
-            </Stack>
-
-            <Stack
-              direction="row"
-              spacing={1.2}
-              alignItems="center"
-              sx={{ ml: "auto" }}
-            >
-              <Stack
-                direction="row"
-                spacing={1.1}
-                alignItems="center"
-                sx={{ display: { xs: "none", sm: "flex" } }}
-              >
-                <Avatar
-                  sx={{
-                    bgcolor: "#0f766e",
-                    width: 40,
-                    height: 40,
-                    fontWeight: 800,
-                    fontSize: 15,
-                  }}
-                >
-                  {user?.username?.charAt(0)?.toUpperCase() || "A"}
-                </Avatar>
-
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      fontWeight: 700,
-                      color: "#101828",
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {user?.username || "Agent"}
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      mt: 0.2,
-                      fontSize: 12,
-                      color: "#667085",
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    Property Agent
-                  </Typography>
-                </Box>
-              </Stack>
-
-              <Button
-                variant="outlined"
-                startIcon={<LogoutOutlinedIcon />}
-                onClick={handleLogout}
-                sx={{
-                  borderRadius: "20px",
-                  textTransform: "none",
-                  fontWeight: 600,
-                  color: "#ff0000",
-                  borderColor: "#d0d5dd",
-                  px: 1.8,
-                  display: { xs: "none", md: "inline-flex" },
-                  "&:hover": {
-                    bgcolor: "#f9fafb",
-                    borderColor: "#98a2b3",
-                  },
-                }}
-              >
-                Logout
-              </Button>
-            </Stack>
-          </Box>
-        </Container>
-      </Box>
-
+    <Box sx={{ minHeight: "calc(100vh - 76px)", color: "#101828" }}>
       <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
@@ -1202,55 +1028,6 @@ function ActionButton({ to, icon, label, disabled = false, primary = false }) {
     </Button>
   );
 }
-
-const navButtonStyle = (active) => ({
-  color: active ? "#0f766e" : "#475467",
-  bgcolor: "transparent",
-  borderRadius: 0,
-  px: 0,
-  py: 2.35,
-  fontWeight: active ? 800 : 600,
-  fontSize: 14,
-  textTransform: "none",
-  minWidth: "auto",
-  position: "relative",
-  transition: "0.2s ease",
-
-  "& .MuiButton-startIcon": {
-    mr: 0.65,
-    color: active ? "#0f766e" : "#475467",
-  },
-
-  "& .MuiSvgIcon-root": {
-    fontSize: 19,
-  },
-
-  "&::after": {
-    content: '""',
-    position: "absolute",
-    left: "50%",
-    bottom: 8,
-    width: active ? "30px" : "0px",
-    height: "3px",
-    borderRadius: "999px",
-    bgcolor: "#0f766e",
-    transform: "translateX(-50%)",
-    transition: "0.2s ease",
-  },
-
-  "&:hover": {
-    bgcolor: "transparent",
-    color: "#0f766e",
-  },
-
-  "&:hover .MuiButton-startIcon": {
-    color: "#0f766e",
-  },
-
-  "&:hover::after": {
-    width: "30px",
-  },
-});
 
 const mobileMenuStyle = {
   bgcolor: "#ffffff",

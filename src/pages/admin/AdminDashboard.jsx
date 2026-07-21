@@ -477,9 +477,9 @@ function AdminDashboard() {
                           justifyContent="space-between"
                           alignItems="center"
                           spacing={2}
-                          sx={{ py: 1.4 }}
+                          sx={{ py: 1.4, width: "100%" }}
                         >
-                          <Box sx={{ minWidth: 0 }}>
+                          <Box sx={{ minWidth: 0, flex: 1 }}>
                             <Typography
                               sx={{
                                 fontWeight: 800,
@@ -488,6 +488,7 @@ function AdminDashboard() {
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                                 whiteSpace: "nowrap",
+                                maxWidth: "100%",
                               }}
                             >
                               {property.title || "Untitled Property"}
@@ -498,13 +499,18 @@ function AdminDashboard() {
                                 mt: 0.4,
                                 color: "#667085",
                                 fontSize: 12.5,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
                               }}
                             >
                               {property.location || "Location unavailable"}
                             </Typography>
                           </Box>
 
-                          <PropertyStatusChip status={property.status} />
+                          <Box sx={{ ml: "auto", flexShrink: 0 }}>
+                            <PropertyStatusChip status={property.status} />
+                          </Box>
                         </Stack>
 
                         {index !== stats.recent_properties.length - 1 && (
@@ -531,9 +537,9 @@ function AdminDashboard() {
                           justifyContent="space-between"
                           alignItems="center"
                           spacing={2}
-                          sx={{ py: 1.4 }}
+                          sx={{ py: 1.4, width: "100%" }}
                         >
-                          <Box sx={{ minWidth: 0 }}>
+                          <Box sx={{ minWidth: 0, flex: 1 }}>
                             <Typography
                               sx={{
                                 fontWeight: 800,
@@ -552,30 +558,21 @@ function AdminDashboard() {
                                 mt: 0.4,
                                 color: "#667085",
                                 fontSize: 12.5,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
                               }}
                             >
-  {payment.username || "Unknown user"}
-  {payment.plan_name ? ` • ${payment.plan_name}` : ""}  
-                              </Typography>
+                              {payment.username || "Unknown user"}
+                              {payment.plan_name
+                                ? ` • ${payment.plan_name}`
+                                : ""}
+                            </Typography>
                           </Box>
 
-                          {/* <Chip
-                            size="small"
-                            label={payment.status || "Unknown"}
-                            sx={{
-                              textTransform: "capitalize",
-                              fontWeight: 700,
-                              bgcolor:
-                                payment.status === "success"
-                                  ? "#ecfdf3"
-                                  : "#fef3f2",
-                              color:
-                                payment.status === "success"
-                                  ? "#067647"
-                                  : "#b42318",
-                            }}
-                          /> */}
-                      <PaymentStatusChip status={payment.status} />
+                          <Box sx={{ ml: "auto", flexShrink: 0 }}>
+                            <PaymentStatusChip status={payment.status} />
+                          </Box>
                         </Stack>
 
                         {index !== stats.recent_payments.length - 1 && (
@@ -668,7 +665,6 @@ function PaymentStatusChip({ status }) {
     />
   );
 }
-
 
 function EmptyMessage({ text }) {
   return (

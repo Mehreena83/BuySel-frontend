@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -13,11 +12,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
+
 import axiosInstance from "../../api/axiosInstance";
 
 function MyInquiries() {
@@ -31,6 +31,7 @@ function MyInquiries() {
         const response = await axiosInstance.get("/properties/my-inquiries/");
         setInquiries(response.data);
       } catch (err) {
+        console.error(err.response?.data || err.message);
         setError("Failed to load inquiries.");
       } finally {
         setLoading(false);
@@ -53,38 +54,27 @@ function MyInquiries() {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#f8fafc",
+        bgcolor: "#f6f8fb",
         py: { xs: 3, md: 5 },
+        background:
+          "radial-gradient(circle at top left, rgba(15,118,110,0.12), transparent 28%), radial-gradient(circle at top right, rgba(16,185,129,0.10), transparent 32%), linear-gradient(135deg, #f8fafc 0%, #f5f7fb 50%, #eefdf7 100%)",
       }}
     >
       <Container maxWidth="lg">
         <Box sx={{ mb: 4 }}>
-          <Button
-            component={Link}
-            to="/dashboard"
-            startIcon={<ArrowBackIcon />}
-            sx={{
-              color: "#475467",
-              fontWeight: 600,
-              textTransform: "none",
-              mb: 3,
-            }}
-          >
-            Back to Dashboard
-          </Button>
-
           <Typography
             variant="h4"
             sx={{
-              fontWeight: 700,
-              color: "#1f2937",
+              fontWeight: 850,
+              color: "#101828",
               fontSize: { xs: 28, md: 36 },
+              letterSpacing: "-0.8px",
             }}
           >
             Property Inquiries
           </Typography>
 
-          <Typography color="#667085" sx={{ mt: 1 }}>
+          <Typography color="#667085" sx={{ mt: 1, fontSize: 15 }}>
             View inquiries received for your approved property listings.
           </Typography>
         </Box>
@@ -96,7 +86,14 @@ function MyInquiries() {
         )}
 
         {error && (
-          <Alert severity="error" sx={{ borderRadius: 2, mb: 3 }}>
+          <Alert
+            severity="error"
+            sx={{
+              borderRadius: "16px",
+              mb: 3,
+              border: "1px solid #fecdca",
+            }}
+          >
             {error}
           </Alert>
         )}
@@ -105,30 +102,35 @@ function MyInquiries() {
           <Card
             elevation={0}
             sx={{
-              border: "1px solid #e5e7eb",
-              borderRadius: 3,
-              bgcolor: "#fff",
+              border: "1px dashed #d0d5dd",
+              borderRadius: "28px",
+              bgcolor: "rgba(255,255,255,0.92)",
+              backdropFilter: "blur(12px)",
+              boxShadow:
+                "0 24px 54px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.9)",
             }}
           >
             <CardContent sx={{ py: 8, textAlign: "center" }}>
               <Box
                 sx={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 2.5,
+                  width: 72,
+                  height: 72,
+                  borderRadius: "24px",
                   bgcolor: "#ecfdf5",
-                  color: "#059669",
+                  color: "#0f766e",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   mx: "auto",
                   mb: 2,
+                  boxShadow:
+                    "0 18px 34px rgba(15,118,110,0.16), inset 0 1px 0 rgba(255,255,255,0.9)",
                 }}
               >
-                <MessageOutlinedIcon />
+                <MessageOutlinedIcon sx={{ fontSize: 36 }} />
               </Box>
 
-              <Typography variant="h6" fontWeight={700} color="#1f2937">
+              <Typography variant="h6" fontWeight={850} color="#101828">
                 No inquiries yet
               </Typography>
 
@@ -146,17 +148,50 @@ function MyInquiries() {
                 key={item.id}
                 elevation={0}
                 sx={{
-                  border: "1px solid #e5e7eb",
-                  borderRadius: 3,
-                  bgcolor: "#fff",
-                  transition: "0.2s ease",
+                  position: "relative",
+                  overflow: "hidden",
+                  border: "1px solid rgba(255,255,255,0.9)",
+                  borderRadius: "26px",
+                  bgcolor: "rgba(255,255,255,0.94)",
+                  backdropFilter: "blur(14px)",
+                  boxShadow:
+                    "0 18px 42px rgba(15,23,42,0.07), inset 0 1px 0 rgba(255,255,255,0.9)",
+                  transition: "0.24s ease",
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    inset: 0,
+                    background:
+                      "linear-gradient(145deg, rgba(236,253,245,0.82) 0%, rgba(255,255,255,0.18) 42%, rgba(255,255,255,0) 100%)",
+                    pointerEvents: "none",
+                  },
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    width: 140,
+                    height: 140,
+                    borderRadius: "50%",
+                    right: -55,
+                    top: -55,
+                    bgcolor: "rgba(15,118,110,0.07)",
+                    boxShadow: "0 0 55px rgba(15,118,110,0.1)",
+                    pointerEvents: "none",
+                  },
                   "&:hover": {
-                    borderColor: "#cbd5e1",
-                    boxShadow: "0 10px 28px rgba(15, 23, 42, 0.06)",
+                    borderColor: "#bbf7d0",
+                    boxShadow:
+                      "0 26px 58px rgba(15,23,42,0.11), inset 0 1px 0 rgba(255,255,255,0.95)",
+                    transform: "translateY(-4px)",
                   },
                 }}
               >
-                <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+                <CardContent
+                  sx={{
+                    position: "relative",
+                    zIndex: 1,
+                    p: { xs: 2.5, md: 3 },
+                  }}
+                >
                   <Stack
                     direction={{ xs: "column", md: "row" }}
                     justifyContent="space-between"
@@ -177,28 +212,40 @@ function MyInquiries() {
                           sx={{
                             bgcolor: "#ecfdf5",
                             color: "#047857",
-                            fontWeight: 700,
-                            borderRadius: "8px",
+                            border: "1px solid #bbf7d0",
+                            fontWeight: 850,
+                            borderRadius: "999px",
+                            px: 0.7,
+                            boxShadow: "0 8px 18px rgba(15,118,110,0.06)",
                           }}
                         />
 
-                        <Typography variant="body2" color="#667085">
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: "#667085",
+                            fontWeight: 650,
+                            flexShrink: 0,
+                          }}
+                        >
                           {formatDate(item.created_at)}
                         </Typography>
                       </Stack>
 
-                      <Stack direction="row" alignItems="center" spacing={1}>
+                      <Stack direction="row" alignItems="center" spacing={1.2}>
                         <Box
                           sx={{
-                            width: 38,
-                            height: 38,
-                            borderRadius: 2,
-                            bgcolor: "#f0fdf4",
-                            color: "#059669",
+                            width: 46,
+                            height: 46,
+                            borderRadius: "16px",
+                            bgcolor: "#ecfdf5",
+                            color: "#0f766e",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             flexShrink: 0,
+                            boxShadow:
+                              "0 14px 28px rgba(15,118,110,0.12), inset 0 1px 0 rgba(255,255,255,0.9)",
                           }}
                         >
                           <PersonOutlineOutlinedIcon fontSize="small" />
@@ -207,12 +254,13 @@ function MyInquiries() {
                         <Box sx={{ minWidth: 0 }}>
                           <Typography
                             variant="h6"
-                            fontWeight={700}
-                            color="#1f2937"
+                            fontWeight={850}
+                            color="#101828"
                             sx={{
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               whiteSpace: "nowrap",
+                              letterSpacing: "-0.3px",
                             }}
                           >
                             {item.name}
@@ -235,72 +283,17 @@ function MyInquiries() {
                           mt: 2.5,
                         }}
                       >
-                        <Box
-                          sx={{
-                            p: 1.5,
-                            borderRadius: 2,
-                            bgcolor: "#f8fafc",
-                            border: "1px solid #eef2f7",
-                          }}
-                        >
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                          >
-                            <PhoneOutlinedIcon
-                              sx={{ fontSize: 18, color: "#64748b" }}
-                            />
-                            <Box sx={{ minWidth: 0 }}>
-                              <Typography variant="caption" color="#667085">
-                                Phone
-                              </Typography>
-                              <Typography
-                                color="#344054"
-                                fontWeight={700}
-                                fontSize={14}
-                              >
-                                {item.phone}
-                              </Typography>
-                            </Box>
-                          </Stack>
-                        </Box>
+                        <InfoBox
+                          icon={<PhoneOutlinedIcon />}
+                          label="Phone"
+                          value={item.phone}
+                        />
 
-                        <Box
-                          sx={{
-                            p: 1.5,
-                            borderRadius: 2,
-                            bgcolor: "#f8fafc",
-                            border: "1px solid #eef2f7",
-                          }}
-                        >
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                          >
-                            <HomeWorkOutlinedIcon
-                              sx={{ fontSize: 18, color: "#64748b" }}
-                            />
-                            <Box sx={{ minWidth: 0 }}>
-                              <Typography variant="caption" color="#667085">
-                                Property
-                              </Typography>
-                              <Typography
-                                color="#344054"
-                                fontWeight={700}
-                                fontSize={14}
-                                sx={{
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {item.property_title}
-                              </Typography>
-                            </Box>
-                          </Stack>
-                        </Box>
+                        <InfoBox
+                          icon={<HomeWorkOutlinedIcon />}
+                          label="Property"
+                          value={item.property_title}
+                        />
                       </Box>
 
                       {item.message && (
@@ -310,21 +303,33 @@ function MyInquiries() {
                           <Typography
                             color="#475467"
                             fontSize={14}
-                            fontWeight={700}
+                            fontWeight={800}
                           >
                             Message
                           </Typography>
 
-                          <Typography
-                            color="#344054"
+                          <Box
                             sx={{
-                              mt: 0.8,
-                              lineHeight: 1.7,
-                              fontSize: 14.5,
+                              mt: 1,
+                              p: 1.6,
+                              borderRadius: "16px",
+                              bgcolor: "rgba(248,250,252,0.82)",
+                              border: "1px solid #eef2f7",
+                              boxShadow:
+                                "inset 0 1px 0 rgba(255,255,255,0.95), 0 8px 18px rgba(15,23,42,0.035)",
                             }}
                           >
-                            {item.message}
-                          </Typography>
+                            <Typography
+                              color="#344054"
+                              sx={{
+                                lineHeight: 1.7,
+                                fontSize: 14.5,
+                                fontWeight: 600,
+                              }}
+                            >
+                              {item.message}
+                            </Typography>
+                          </Box>
                         </>
                       )}
                     </Box>
@@ -335,20 +340,23 @@ function MyInquiries() {
                       href={`tel:${item.phone}`}
                       startIcon={<PhoneOutlinedIcon />}
                       sx={{
-                        borderRadius: 2,
-                        fontWeight: 700,
+                        borderRadius: "15px",
+                        fontWeight: 850,
                         textTransform: "none",
                         borderColor: "#bbf7d0",
                         color: "#047857",
-                        bgcolor: "#ecfdf5",
+                        bgcolor: "#ffffff",
                         px: 2.5,
                         py: 1,
                         minWidth: 130,
                         height: 42,
                         alignSelf: { xs: "stretch", md: "flex-start" },
+                        boxShadow: "0 10px 22px rgba(15,118,110,0.08)",
                         "&:hover": {
                           borderColor: "#86efac",
-                          bgcolor: "#d1fae5",
+                          bgcolor: "#ecfdf5",
+                          transform: "translateY(-1px)",
+                          boxShadow: "0 12px 26px rgba(15,118,110,0.12)",
                         },
                       }}
                     >
@@ -361,6 +369,58 @@ function MyInquiries() {
           </Stack>
         )}
       </Container>
+    </Box>
+  );
+}
+
+function InfoBox({ icon, label, value }) {
+  return (
+    <Box
+      sx={{
+        p: 1.5,
+        borderRadius: "16px",
+        bgcolor: "rgba(248,250,252,0.85)",
+        border: "1px solid #eef2f7",
+        boxShadow:
+          "inset 0 1px 0 rgba(255,255,255,0.95), 0 8px 18px rgba(15,23,42,0.035)",
+      }}
+    >
+      <Stack direction="row" spacing={1} alignItems="center">
+        <Box
+          sx={{
+            color: "#64748b",
+            display: "flex",
+            flexShrink: 0,
+            "& svg": {
+              fontSize: 19,
+            },
+          }}
+        >
+          {icon}
+        </Box>
+
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            variant="caption"
+            sx={{ color: "#667085", fontWeight: 700 }}
+          >
+            {label}
+          </Typography>
+
+          <Typography
+            color="#344054"
+            fontWeight={800}
+            fontSize={14}
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {value || "N/A"}
+          </Typography>
+        </Box>
+      </Stack>
     </Box>
   );
 }

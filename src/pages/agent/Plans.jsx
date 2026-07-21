@@ -11,10 +11,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 
 function Plans() {
@@ -31,6 +31,7 @@ function Plans() {
         const response = await axiosInstance.get("/plans/");
         setPlans(response.data);
       } catch (err) {
+        console.error(err.response?.data || err.message);
         setError("Failed to load plans.");
       } finally {
         setLoading(false);
@@ -108,23 +109,15 @@ function Plans() {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f8fafc" }}>
-      <Container maxWidth="lg" sx={{ pt: { xs: 3, md: 4 } }}>
-        <Button
-          component={Link}
-          to="/dashboard"
-          startIcon={<ArrowBackIcon />}
-          sx={{
-            color: "#475467",
-            fontWeight: 700,
-            textTransform: "none",
-            mb: 3,
-          }}
-        >
-          Back to Dashboard
-        </Button>
-      </Container>
-      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        bgcolor: "#f6f8fb",
+        background:
+          "radial-gradient(circle at top left, rgba(15,118,110,0.12), transparent 28%), radial-gradient(circle at top right, rgba(16,185,129,0.10), transparent 32%), linear-gradient(135deg, #f8fafc 0%, #f5f7fb 50%, #eefdf7 100%)",
+      }}
+    >
+      <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
         <Box
           sx={{
             mb: 5,
@@ -136,20 +129,22 @@ function Plans() {
             sx={{
               bgcolor: "#ecfdf5",
               color: "#047857",
-              fontWeight: 800,
-              borderRadius: 2,
+              fontWeight: 850,
+              borderRadius: "999px",
               mb: 2,
               px: 1,
+              border: "1px solid #bbf7d0",
+              boxShadow: "0 10px 24px rgba(15,118,110,0.08)",
             }}
           />
 
           <Typography
             sx={{
               fontSize: { xs: 34, md: 48 },
-              fontWeight: 750,
-              color: "#111827",
-              letterSpacing: "-0.8px",
-              lineHeight: 1.1,
+              fontWeight: 850,
+              color: "#101828",
+              letterSpacing: "-1.3px",
+              lineHeight: 1.08,
             }}
           >
             Choose a plan that fits your listings
@@ -177,7 +172,14 @@ function Plans() {
         )}
 
         {error && (
-          <Alert severity="error" sx={{ borderRadius: 2, mb: 3 }}>
+          <Alert
+            severity="error"
+            sx={{
+              borderRadius: "16px",
+              mb: 3,
+              border: "1px solid #fecdca",
+            }}
+          >
             {error}
           </Alert>
         )}
@@ -203,36 +205,66 @@ function Plans() {
                   key={plan.id}
                   elevation={0}
                   sx={{
-                    border: featured
-                      ? "1.5px solid #059669"
-                      : "1px solid #e5e7eb",
-                    borderRadius: 4,
-                    bgcolor: "#ffffff",
                     position: "relative",
                     overflow: "hidden",
-                    transition: "0.2s ease",
+                    border: featured
+                      ? "1.5px solid rgba(5,150,105,0.55)"
+                      : "1px solid rgba(255,255,255,0.9)",
+                    borderRadius: "28px",
+                    bgcolor: "rgba(255,255,255,0.94)",
+                    backdropFilter: "blur(14px)",
+                    transition: "0.25s ease",
                     boxShadow: featured
-                      ? "0 16px 35px rgba(5, 150, 105, 0.12)"
-                      : "0 8px 24px rgba(15, 23, 42, 0.03)",
+                      ? "0 24px 58px rgba(5,150,105,0.18), inset 0 1px 0 rgba(255,255,255,0.95)"
+                      : "0 18px 42px rgba(15,23,42,0.07), inset 0 1px 0 rgba(255,255,255,0.9)",
+                    "&::before": {
+                      content: '""',
+                      position: "absolute",
+                      inset: 0,
+                      background: featured
+                        ? "linear-gradient(145deg, rgba(236,253,245,0.92) 0%, rgba(255,255,255,0.20) 44%, rgba(255,255,255,0) 100%)"
+                        : "linear-gradient(145deg, rgba(236,253,245,0.72) 0%, rgba(255,255,255,0.17) 42%, rgba(255,255,255,0) 100%)",
+                      pointerEvents: "none",
+                    },
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      width: 150,
+                      height: 150,
+                      borderRadius: "50%",
+                      right: -60,
+                      top: -60,
+                      bgcolor: featured
+                        ? "rgba(5,150,105,0.12)"
+                        : "rgba(15,118,110,0.07)",
+                      boxShadow: "0 0 60px rgba(15,118,110,0.12)",
+                      pointerEvents: "none",
+                    },
                     "&:hover": {
-                      transform: "translateY(-4px)",
-                      boxShadow: "0 18px 40px rgba(15, 23, 42, 0.08)",
-                      borderColor: featured ? "#059669" : "#cbd5e1",
+                      transform: "translateY(-6px)",
+                      borderColor: "#bbf7d0",
+                      boxShadow: featured
+                        ? "0 30px 68px rgba(5,150,105,0.23), inset 0 1px 0 rgba(255,255,255,0.95)"
+                        : "0 26px 58px rgba(15,23,42,0.11), inset 0 1px 0 rgba(255,255,255,0.95)",
                     },
                   }}
                 >
                   {featured && (
                     <Box
                       sx={{
-                        height: 5,
+                        height: 6,
                         bgcolor: "#059669",
                         width: "100%",
+                        position: "relative",
+                        zIndex: 1,
                       }}
                     />
                   )}
 
                   <CardContent
                     sx={{
+                      position: "relative",
+                      zIndex: 1,
                       p: { xs: 3, md: 3.5 },
                       height: "100%",
                       display: "flex",
@@ -246,14 +278,20 @@ function Plans() {
                     >
                       <Box
                         sx={{
-                          width: 48,
-                          height: 48,
-                          borderRadius: 2.5,
+                          width: 54,
+                          height: 54,
+                          borderRadius: "18px",
                           bgcolor: featured ? "#065f46" : "#ecfdf5",
                           color: featured ? "#ffffff" : "#059669",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
+                          boxShadow: featured
+                            ? "0 16px 30px rgba(6,95,70,0.24), inset 0 1px 0 rgba(255,255,255,0.22)"
+                            : "0 14px 28px rgba(15,118,110,0.12), inset 0 1px 0 rgba(255,255,255,0.9)",
+                          "& svg": {
+                            fontSize: 28,
+                          },
                         }}
                       >
                         <WorkspacePremiumOutlinedIcon />
@@ -266,17 +304,19 @@ function Plans() {
                           bgcolor: featured ? "#ecfdf5" : "#f8fafc",
                           color: featured ? "#047857" : "#475467",
                           border: "1px solid #e5e7eb",
-                          fontWeight: 700,
+                          fontWeight: 800,
                           borderRadius: "999px",
+                          px: 0.7,
+                          boxShadow: "0 8px 18px rgba(15,23,42,0.04)",
                         }}
                       />
                     </Stack>
 
                     <Typography
                       variant="h5"
-                      fontWeight={750}
-                      color="#1f2937"
-                      sx={{ mt: 3 }}
+                      fontWeight={850}
+                      color="#101828"
+                      sx={{ mt: 3, letterSpacing: "-0.4px" }}
                     >
                       {plan.name}
                     </Typography>
@@ -294,10 +334,10 @@ function Plans() {
                       <Typography
                         sx={{
                           fontSize: { xs: 38, md: 44 },
-                          fontWeight: 800,
+                          fontWeight: 900,
                           color: "#065f46",
                           lineHeight: 1,
-                          letterSpacing: "-0.8px",
+                          letterSpacing: "-1px",
                         }}
                       >
                         ₹{Number(plan.price).toFixed(0)}
@@ -312,9 +352,11 @@ function Plans() {
                       sx={{
                         mt: 3,
                         p: 2,
-                        borderRadius: 3,
-                        bgcolor: "#f8fafc",
+                        borderRadius: "18px",
+                        bgcolor: "rgba(248,250,252,0.82)",
                         border: "1px solid #eef2f7",
+                        boxShadow:
+                          "inset 0 1px 0 rgba(255,255,255,0.95), 0 10px 24px rgba(15,23,42,0.035)",
                       }}
                     >
                       <Stack
@@ -326,7 +368,7 @@ function Plans() {
                         <CheckCircleIcon
                           sx={{ color: "#059669", fontSize: 20 }}
                         />
-                        <Typography color="#344054" fontWeight={600}>
+                        <Typography color="#344054" fontWeight={700}>
                           {plan.duration_days} days validity
                         </Typography>
                       </Stack>
@@ -335,7 +377,7 @@ function Plans() {
                         <CheckCircleIcon
                           sx={{ color: "#059669", fontSize: 20 }}
                         />
-                        <Typography color="#344054" fontWeight={600}>
+                        <Typography color="#344054" fontWeight={700}>
                           Add up to {plan.property_limit} properties
                         </Typography>
                       </Stack>
@@ -351,17 +393,22 @@ function Plans() {
                       sx={{
                         mt: 4,
                         py: 1.25,
-                        borderRadius: 2,
-                        fontWeight: 750,
+                        borderRadius: "15px",
+                        fontWeight: 850,
                         textTransform: "none",
-                        boxShadow: "none",
                         bgcolor: featured ? "#065f46" : "#ffffff",
                         color: featured ? "#ffffff" : "#065f46",
                         borderColor: "#bbf7d0",
+                        boxShadow: featured
+                          ? "0 14px 28px rgba(6,95,70,0.22), inset 0 1px 0 rgba(255,255,255,0.24)"
+                          : "0 10px 22px rgba(15,23,42,0.05)",
                         "&:hover": {
                           bgcolor: featured ? "#047857" : "#ecfdf5",
                           borderColor: "#059669",
-                          boxShadow: "none",
+                          boxShadow: featured
+                            ? "0 18px 36px rgba(6,95,70,0.26), inset 0 1px 0 rgba(255,255,255,0.24)"
+                            : "0 12px 26px rgba(15,23,42,0.07)",
+                          transform: "translateY(-1px)",
                         },
                       }}
                     >
@@ -380,13 +427,16 @@ function Plans() {
           <Card
             elevation={0}
             sx={{
-              border: "1px solid #e5e7eb",
-              borderRadius: 3,
-              bgcolor: "#ffffff",
+              border: "1px dashed #d0d5dd",
+              borderRadius: "28px",
+              bgcolor: "rgba(255,255,255,0.92)",
+              backdropFilter: "blur(12px)",
+              boxShadow:
+                "0 24px 54px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.9)",
             }}
           >
             <CardContent sx={{ py: 7, textAlign: "center" }}>
-              <Typography fontWeight={700} color="#1f2937">
+              <Typography fontWeight={850} color="#1f2937">
                 No plans available
               </Typography>
 

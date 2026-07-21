@@ -371,20 +371,6 @@ function AddProperty() {
         }}
       >
         <Container maxWidth="md">
-          <Button
-            component={Link}
-            to="/dashboard"
-            startIcon={<ArrowBackIcon />}
-            sx={{
-              color: "#475467",
-              fontWeight: 700,
-              textTransform: "none",
-              mb: 3,
-            }}
-          >
-            Back to Dashboard
-          </Button>
-
           <Card
             elevation={0}
             sx={{

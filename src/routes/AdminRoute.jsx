@@ -15,11 +15,7 @@ function AdminRoute({ children }) {
 
   if (!adminToken || !adminUser?.is_master_admin) {
     return (
-      <Navigate
-        to="/admin-login"
-        state={{ from: location.pathname }}
-        replace
-      />
+      <Navigate to="/admin-login" state={{ from: location.pathname }} replace />
     );
   }
 

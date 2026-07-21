@@ -38,9 +38,7 @@ function AdminPayments() {
         setLoading(true);
         setError("");
 
-        const response = await adminAxiosInstance.get(
-          "/admin-panel/payments/"
-        );
+        const response = await adminAxiosInstance.get("/admin-panel/payments/");
 
         setPayments(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
@@ -389,7 +387,7 @@ function AdminPayments() {
                           >
                             ₹
                             {Number(payment.amount || 0).toLocaleString(
-                              "en-IN"
+                              "en-IN",
                             )}
                           </Typography>
 
@@ -413,7 +411,7 @@ function AdminPayments() {
                               text={
                                 payment.created_at
                                   ? new Date(
-                                      payment.created_at
+                                      payment.created_at,
                                     ).toLocaleDateString("en-IN")
                                   : "N/A"
                               }

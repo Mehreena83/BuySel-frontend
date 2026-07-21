@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -14,7 +14,6 @@ import {
   Typography,
 } from "@mui/material";
 import AppSnackbar from "../../components/common/AppSnackbar";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import axiosInstance from "../../api/axiosInstance";
 
@@ -441,20 +440,6 @@ function EditProperty() {
         }}
       >
         <Container maxWidth="md">
-          <Button
-            component={Link}
-            to="/my-properties"
-            startIcon={<ArrowBackIcon />}
-            sx={{
-              color: "#475467",
-              fontWeight: 700,
-              textTransform: "none",
-              mb: 3,
-            }}
-          >
-            Back to My Properties
-          </Button>
-
           <Card
             elevation={0}
             sx={{
