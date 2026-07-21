@@ -258,53 +258,42 @@ function PropertyDetails() {
     "commercial_type",
   ];
 
-const propertyTypeDetailMap = {
-  house: [
-    "bedrooms",
-    "bathrooms",
-    "area_sqft",
-    "total_rooms",
-    "floors",
-  ],
-  villa: [
-    "bedrooms",
-    "bathrooms",
-    "area_sqft",
-    "total_rooms",
-    "parking",
-    "furnishing",
-  ],
-  apartment: [
-    "bedrooms",
-    "bathrooms",
-    "area_sqft",
-    "floor_number",
-    "total_floors",
-    "furnishing",
-  ],
-  land: [
-    "total_cent",
-    "price_per_cent",
-    "road_access",
-    "plot_type",
-  ],
-  commercial: [
-    "commercial_type",
-    "builtup_area_sqft",
-    "floor_number",
-    "parking",
-    "road_access",
-  ],
-};
+  const propertyTypeDetailMap = {
+    house: ["bedrooms", "bathrooms", "area_sqft", "total_rooms", "floors"],
+    villa: [
+      "bedrooms",
+      "bathrooms",
+      "area_sqft",
+      "total_rooms",
+      "parking",
+      "furnishing",
+    ],
+    apartment: [
+      "bedrooms",
+      "bathrooms",
+      "area_sqft",
+      "floor_number",
+      "total_floors",
+      "furnishing",
+    ],
+    land: ["total_cent", "price_per_cent", "road_access", "plot_type"],
+    commercial: [
+      "commercial_type",
+      "builtup_area_sqft",
+      "floor_number",
+      "parking",
+      "road_access",
+    ],
+  };
 
-const selectedDetailKeys = propertyTypeDetailMap[property.property_type] || [];
+  const selectedDetailKeys =
+    propertyTypeDetailMap[property.property_type] || [];
 
-const detailEntries = selectedDetailKeys
-  .map((key) => [key, property[key]])
-  .filter(
-    ([, value]) => value !== "" && value !== null && value !== undefined,
-  );
-
+  const detailEntries = selectedDetailKeys
+    .map((key) => [key, property[key]])
+    .filter(
+      ([, value]) => value !== "" && value !== null && value !== undefined,
+    );
 
   const overviewItems = detailEntries.slice(0, 3);
 

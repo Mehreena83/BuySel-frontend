@@ -135,21 +135,21 @@ function AddProperty() {
     location: "",
     address: "",
     bedrooms: "",
-bathrooms: "",
-area_sqft: "",
-total_rooms: "",
-floors: "",
-floor_number: "",
-total_floors: "",
-furnishing: "",
-parking: "",
-total_cent: "",
-price_per_cent: "",
-road_access: "",
-plot_type: "",
-commercial_type: "",
-builtup_area_sqft: "",
-property_images: [null],
+    bathrooms: "",
+    area_sqft: "",
+    total_rooms: "",
+    floors: "",
+    floor_number: "",
+    total_floors: "",
+    furnishing: "",
+    parking: "",
+    total_cent: "",
+    price_per_cent: "",
+    road_access: "",
+    plot_type: "",
+    commercial_type: "",
+    builtup_area_sqft: "",
+    property_images: [null],
   });
 
   const [snackbar, setSnackbar] = useState({
@@ -177,31 +177,30 @@ property_images: [null],
 
       return;
     }
-if (name === "property_type") {
-  setFormData({
-    ...formData,
-    property_type: value,
+    if (name === "property_type") {
+      setFormData({
+        ...formData,
+        property_type: value,
 
-    bedrooms: "",
-    bathrooms: "",
-    area_sqft: "",
-    total_rooms: "",
-    floors: "",
-    floor_number: "",
-    total_floors: "",
-    furnishing: "",
-    parking: "",
-    total_cent: "",
-    price_per_cent: "",
-    road_access: "",
-    plot_type: "",
-    commercial_type: "",
-    builtup_area_sqft: "",
-  });
+        bedrooms: "",
+        bathrooms: "",
+        area_sqft: "",
+        total_rooms: "",
+        floors: "",
+        floor_number: "",
+        total_floors: "",
+        furnishing: "",
+        parking: "",
+        total_cent: "",
+        price_per_cent: "",
+        road_access: "",
+        plot_type: "",
+        commercial_type: "",
+        builtup_area_sqft: "",
+      });
 
-  return;
-}
-
+      return;
+    }
 
     setFormData({
       ...formData,
@@ -209,14 +208,14 @@ if (name === "property_type") {
     });
   };
 
-const handleDetailsChange = (e) => {
-  const { name, value } = e.target;
+  const handleDetailsChange = (e) => {
+    const { name, value } = e.target;
 
-  setFormData({
-    ...formData,
-    [name]: value,
-  });
-};
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const addImageField = () => {
     setFormData({
@@ -238,7 +237,7 @@ const handleDetailsChange = (e) => {
 
   const validateDetails = () => {
     for (const field of selectedDetailFields) {
-const value = formData[field.name];
+      const value = formData[field.name];
       if (field.type === "number" && value !== "" && value !== undefined) {
         if (Number(value) < 0) {
           return `${field.label} cannot be negative.`;
@@ -282,13 +281,13 @@ const value = formData[field.name];
       data.append("address", formData.address);
     }
 
-selectedDetailFields.forEach((field) => {
-  const value = formData[field.name];
+    selectedDetailFields.forEach((field) => {
+      const value = formData[field.name];
 
-  if (value !== "" && value !== null && value !== undefined) {
-    data.append(field.name, value);
-  }
-});
+      if (value !== "" && value !== null && value !== undefined) {
+        data.append(field.name, value);
+      }
+    });
     const selectedImages = formData.property_images.filter((image) => image);
 
     if (selectedImages.length > 0) {

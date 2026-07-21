@@ -14,6 +14,15 @@ import MyInquiries from "./pages/agent/MyInquiries";
 import EditProperty from "./pages/agent/EditProperty";
 import AgentRoute from "./routes/AgentRoute";
 import PaymentHistory from "./pages/agent/PaymentHistory";
+import AdminRoute from "./routes/AdminRoute";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminProperties from "./pages/admin/properties/AdminProperties";
+import AdminLayout from "./layouts/AdminLayout";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminPlans from "./pages/admin/AdminPlans";
+import AdminPayments from "./pages/admin/AdminPayments";
+import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
 
 function App() {
   return (
@@ -88,6 +97,23 @@ function App() {
           </AgentRoute>
         }
       />
+      <Route path="/admin-login" element={<AdminLogin />} />
+
+      <Route
+        element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }
+      >
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+        <Route path="/admin-properties" element={<AdminProperties />} />
+        <Route path="/admin-users" element={<AdminUsers />} />
+        <Route path="/admin-plans" element={<AdminPlans />} />
+        <Route path="/admin-payments" element={<AdminPayments />} />
+        <Route path="/admin-subscriptions" element={<AdminSubscriptions />} />
+      </Route>
     </Routes>
   );
 }
