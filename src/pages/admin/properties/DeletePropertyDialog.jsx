@@ -70,8 +70,7 @@ function DeletePropertyDialog({
 
       <DialogContent>
         <Typography sx={{ color: "#475467", lineHeight: 1.7 }}>
-          Are you sure you want to delete{" "}
-          <strong>{property?.title}</strong>?
+          Are you sure you want to delete <strong>{property?.title}</strong>?
         </Typography>
 
         <Typography sx={{ mt: 1, fontSize: 13, color: "#98a2b3" }}>
@@ -100,7 +99,11 @@ function DeletePropertyDialog({
             boxShadow: "none",
           }}
         >
-          {loading ? <CircularProgress size={20} color="inherit" /> : "Delete Property"}
+          {loading ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : (
+            "Delete Property"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

@@ -439,7 +439,12 @@ function AdminProperties() {
               </Box>
 
               <Typography
-                sx={{ mt: 1.8, fontWeight: 850, color: "#344054", fontSize: 18 }}
+                sx={{
+                  mt: 1.8,
+                  fontWeight: 850,
+                  color: "#344054",
+                  fontSize: 18,
+                }}
               >
                 No properties found
               </Typography>

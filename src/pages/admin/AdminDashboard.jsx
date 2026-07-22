@@ -732,46 +732,4 @@ function InfoCard({ title, subtitle, children }) {
   );
 }
 
-function OverviewRow({ label, value, bgcolor, color }) {
-  return (
-    <Stack
-      direction="row"
-      justifyContent="space-between"
-      alignItems="center"
-      sx={{
-        p: 1.45,
-        bgcolor: "#f9fafb",
-        border: "1px solid #eaecf0",
-        borderRadius: "14px",
-      }}
-    >
-      <Typography
-        sx={{
-          fontSize: 14,
-          fontWeight: 700,
-          color: "#344054",
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Box
-        sx={{
-          minWidth: 44,
-          px: 1.25,
-          py: 0.6,
-          borderRadius: "999px",
-          textAlign: "center",
-          bgcolor,
-          color,
-          fontWeight: 800,
-          fontSize: 13,
-        }}
-      >
-        {value}
-      </Box>
-    </Stack>
-  );
-}
-
 export default AdminDashboard;

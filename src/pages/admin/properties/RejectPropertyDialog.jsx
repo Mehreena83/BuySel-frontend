@@ -136,7 +136,11 @@ function RejectPropertyDialog({
             boxShadow: "none",
           }}
         >
-          {loading ? <CircularProgress size={20} color="inherit" /> : "Reject Property"}
+          {loading ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : (
+            "Reject Property"
+          )}
         </Button>
       </DialogActions>
     </Dialog>
