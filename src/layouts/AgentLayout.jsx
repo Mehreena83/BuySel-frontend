@@ -15,7 +15,6 @@ import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
@@ -68,17 +67,12 @@ function AgentLayout() {
       path: "/my-inquiries",
       icon: <MailOutlineOutlinedIcon />,
     },
-    {
-      label: "Home",
-      path: "/",
-      icon: <HomeOutlinedIcon />,
-    },
   ];
 
   const isActive = (path) => {
     if (path === "/my-properties") {
       return (
-        location.pathname === "/my-properties" ||
+        location.pathname === "/my-properties" || 
         location.pathname.startsWith("/edit-property/")
       );
     }

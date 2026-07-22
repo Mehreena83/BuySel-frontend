@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import PublicLayout from "./layouts/PublicLayout";
 import AgentLayout from "./layouts/AgentLayout";
 import AdminLayout from "./layouts/AdminLayout";
-
+import PublicRoute from "./routes/PublicRoute";
 import Home from "./pages/public/Home";
 import Buy from "./pages/public/Buy";
 import Rent from "./pages/public/Rent";
@@ -36,8 +36,13 @@ function App() {
     <Routes>
       {/* ================= PUBLIC ROUTES ================= */}
 
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<Home />} />
+<Route
+  element={
+    <PublicRoute>
+      <PublicLayout />
+    </PublicRoute>
+  }
+>        <Route path="/" element={<Home />} />
         <Route path="/buy" element={<Buy />} />
         <Route path="/rent" element={<Rent />} />
 
