@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -7,15 +7,133 @@ import {
   CardContent,
   Container,
   Divider,
+  IconButton,
   MenuItem,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import axiosInstance from "../../api/axiosInstance";
 import AppSnackbar from "../../components/common/AppSnackbar";
+
+const MAX_PROPERTY_IMAGES = 8;
+
+function SelectedImagePreview({ image, index, onRemove }) {
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(image);
+    setPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [image]);
+
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: "14px",
+        border: index === 0 ? "1.5px solid #34d399" : "1px solid #e4e7ec",
+        bgcolor: "#ffffff",
+        boxShadow:
+          index === 0
+            ? "0 8px 22px rgba(5, 150, 105, 0.10)"
+            : "0 6px 18px rgba(15, 23, 42, 0.05)",
+      }}
+    >
+      <Box
+        component="img"
+        src={previewUrl}
+        alt={index === 0 ? "Main property" : `Property ${index + 1}`}
+        sx={{
+          display: "block",
+          width: "100%",
+          height: { xs: 125, sm: 135 },
+          objectFit: "cover",
+        }}
+      />
+
+      <Box
+        sx={{
+          px: 1.2,
+          py: 1,
+          borderTop: "1px solid #eef2f6",
+          bgcolor: "#ffffff",
+        }}
+      >
+        <Typography
+          noWrap
+          sx={{
+            pr: 3.5,
+            color: "#344054",
+            fontSize: 12.2,
+            fontWeight: 750,
+          }}
+        >
+          {index === 0 ? "Main Image" : `Gallery Image ${index}`}
+        </Typography>
+
+        <Typography
+          noWrap
+          sx={{
+            mt: 0.25,
+            color: "#98a2b3",
+            fontSize: 10.8,
+          }}
+        >
+          {image.name}
+        </Typography>
+      </Box>
+
+      {index === 0 && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 9,
+            left: 9,
+            px: 1,
+            py: 0.4,
+            borderRadius: "999px",
+            bgcolor: "#047857",
+            color: "#ffffff",
+            fontSize: 10,
+            fontWeight: 850,
+            letterSpacing: "0.35px",
+            boxShadow: "0 4px 12px rgba(4,120,87,0.25)",
+          }}
+        >
+          MAIN
+        </Box>
+      )}
+
+      <IconButton
+        type="button"
+        aria-label={`Remove image ${index + 1}`}
+        onClick={() => onRemove(index)}
+        sx={{
+          position: "absolute",
+          top: 7,
+          right: 7,
+          width: 29,
+          height: 29,
+          color: "#ffffff",
+          bgcolor: "rgba(15, 23, 42, 0.72)",
+          backdropFilter: "blur(4px)",
+          "&:hover": {
+            bgcolor: "#b42318",
+          },
+        }}
+      >
+        <CloseRoundedIcon sx={{ fontSize: 17 }} />
+      </IconButton>
+    </Box>
+  );
+}
 
 const SectionTitle = ({ children }) => (
   <Stack direction="row" alignItems="center" spacing={1.2} sx={{ mb: 2 }}>
@@ -149,7 +267,7 @@ function AddProperty() {
     plot_type: "",
     commercial_type: "",
     builtup_area_sqft: "",
-    property_images: [null],
+    property_images: [],
   });
 
   const [snackbar, setSnackbar] = useState({
@@ -163,20 +281,9 @@ function AddProperty() {
   const selectedDetailFields =
     propertyDetailFields[formData.property_type] || [];
 
-  const handleChange = (e, index = null) => {
-    const { name, value, files } = e.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-    if (name === "property_images") {
-      const updatedImages = [...formData.property_images];
-      updatedImages[index] = files[0];
-
-      setFormData({
-        ...formData,
-        property_images: updatedImages,
-      });
-
-      return;
-    }
     if (name === "property_type") {
       setFormData({
         ...formData,
@@ -217,22 +324,71 @@ function AddProperty() {
     });
   };
 
-  const addImageField = () => {
-    setFormData({
-      ...formData,
-      property_images: [...formData.property_images, null],
-    });
-  };
+  const handleImageSelection = (event) => {
+    const pickedFiles = Array.from(event.target.files || []);
+    event.target.value = "";
 
-  const removeImageField = (index) => {
-    const updatedImages = formData.property_images.filter(
-      (_, i) => i !== index,
+    if (pickedFiles.length === 0) return;
+
+    const imageFiles = pickedFiles.filter((file) =>
+      file.type.startsWith("image/"),
     );
 
-    setFormData({
-      ...formData,
-      property_images: updatedImages.length > 0 ? updatedImages : [null],
-    });
+    if (imageFiles.length !== pickedFiles.length) {
+      setSnackbar({
+        open: true,
+        message: "Only image files are allowed.",
+        severity: "warning",
+      });
+    }
+
+    const uniqueImages = imageFiles.filter(
+      (newImage) =>
+        !formData.property_images.some(
+          (currentImage) =>
+            currentImage.name === newImage.name &&
+            currentImage.size === newImage.size &&
+            currentImage.lastModified === newImage.lastModified,
+        ),
+    );
+
+    const availableSlots =
+      MAX_PROPERTY_IMAGES - formData.property_images.length;
+
+    if (availableSlots <= 0) {
+      setSnackbar({
+        open: true,
+        message: `Maximum ${MAX_PROPERTY_IMAGES} images are allowed.`,
+        severity: "warning",
+      });
+      return;
+    }
+
+    const acceptedImages = uniqueImages.slice(0, availableSlots);
+
+    setFormData((previous) => ({
+      ...previous,
+      property_images: [...previous.property_images, ...acceptedImages],
+    }));
+
+    if (uniqueImages.length > availableSlots) {
+      setSnackbar({
+        open: true,
+        message: `Only ${availableSlots} more image${
+          availableSlots === 1 ? "" : "s"
+        } can be added. Maximum limit is ${MAX_PROPERTY_IMAGES}.`,
+        severity: "warning",
+      });
+    }
+  };
+
+  const removeImage = (index) => {
+    setFormData((previous) => ({
+      ...previous,
+      property_images: previous.property_images.filter(
+        (_, imageIndex) => imageIndex !== index,
+      ),
+    }));
   };
 
   const validateDetails = () => {
@@ -256,6 +412,24 @@ function AddProperty() {
     e.preventDefault();
 
     const validationError = validateDetails();
+
+    if (formData.property_images.length === 0) {
+      setSnackbar({
+        open: true,
+        message: "Please select at least one property image.",
+        severity: "warning",
+      });
+      return;
+    }
+
+    if (formData.property_images.length > MAX_PROPERTY_IMAGES) {
+      setSnackbar({
+        open: true,
+        message: `Maximum ${MAX_PROPERTY_IMAGES} images are allowed.`,
+        severity: "warning",
+      });
+      return;
+    }
 
     if (validationError) {
       setSnackbar({
@@ -590,161 +764,309 @@ function AddProperty() {
 
                     <Box
                       sx={{
-                        border: "1px solid #e5e7eb",
-                        borderRadius: 3,
+                        border: "1px solid #e4e7ec",
+                        borderRadius: "18px",
                         bgcolor: "#ffffff",
-                        p: { xs: 1.8, sm: 2 },
+                        p: { xs: 2, sm: 2.4 },
+                        boxShadow: "0 6px 18px rgba(15, 23, 42, 0.035)",
                       }}
                     >
-                      <Typography
+                      <Stack
+                        direction={{ xs: "column", sm: "row" }}
+                        justifyContent="space-between"
+                        alignItems={{ xs: "flex-start", sm: "center" }}
+                        gap={1.2}
                         sx={{
-                          color: "#667085",
-                          fontSize: 13.5,
-                          mb: 2,
-                          lineHeight: 1.6,
+                          mb: 1.8,
+                          width: "100%",
                         }}
                       >
-                        First image will be the main image. Add more images for
-                        gallery.
-                      </Typography>
-
-                      <Stack spacing={1.2}>
-                        {formData.property_images.map((image, index) => (
-                          <Box
-                            key={index}
+                        <Box
+                          sx={{
+                            minWidth: 0,
+                            flex: 1,
+                          }}
+                        >
+                          <Typography
                             sx={{
-                              display: "flex",
-                              flexDirection: { xs: "column", sm: "row" },
-                              alignItems: { xs: "stretch", sm: "center" },
-                              justifyContent: "space-between",
-                              gap: { xs: 1.2, sm: 1.5 },
-                              p: { xs: 1.4, sm: 1.6 },
-                              borderRadius: 2,
-                              border: "1px solid #e5e7eb",
-                              bgcolor: index === 0 ? "#f0fdf4" : "#f8fafc",
+                              color: "#101828",
+                              fontSize: 14.5,
+                              fontWeight: 800,
+                              lineHeight: 1.35,
                             }}
                           >
-                            <Box sx={{ minWidth: 0, flex: 1 }}>
-                              <Typography
-                                sx={{
-                                  fontSize: 14,
-                                  fontWeight: 600,
-                                  color: "#1f2937",
-                                }}
-                              >
-                                {index === 0
-                                  ? "Main Image"
-                                  : `Gallery Image ${index}`}
-                              </Typography>
+                            Upload property photos
+                          </Typography>
 
-                              <Typography
-                                sx={{
-                                  color: image ? "#475467" : "#98a2b3",
-                                  fontSize: 12.5,
-                                  mt: 0.3,
-                                  maxWidth: "100%",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {image ? image.name : "No image selected"}
-                              </Typography>
-                            </Box>
+                          <Typography
+                            sx={{
+                              mt: 0.4,
+                              color: "#667085",
+                              fontSize: 12.7,
+                              lineHeight: 1.55,
+                            }}
+                          >
+                            Select up to {MAX_PROPERTY_IMAGES} images together.
+                            The first image becomes the main image.
+                          </Typography>
+                        </Box>
 
-                            <Stack
-                              direction="row"
-                              spacing={1}
-                              sx={{
-                                flexShrink: 0,
-                                justifyContent: {
-                                  xs: "flex-end",
-                                  sm: "flex-start",
-                                },
-                                width: { xs: "100%", sm: "auto" },
-                              }}
-                            >
-                              <Button
-                                component="label"
-                                size="small"
-                                startIcon={<CloudUploadOutlinedIcon />}
-                                sx={{
-                                  minWidth: 92,
-                                  borderRadius: 2,
-                                  textTransform: "none",
-                                  fontWeight: 500,
-                                  color: "#047857",
-                                  bgcolor: "#ffffff",
-                                  border: "1px solid #bbf7d0",
-                                  px: 1.6,
-                                  "& .MuiButton-startIcon": {
-                                    mr: 0.6,
-                                  },
-                                  "& .MuiButton-startIcon svg": {
-                                    fontSize: "17px",
-                                  },
-                                  "&:hover": {
-                                    bgcolor: "#ecfdf5",
-                                    borderColor: "#86efac",
-                                  },
-                                }}
-                              >
-                                Upload
-                                <input
-                                  type="file"
-                                  name="property_images"
-                                  hidden
-                                  accept="image/*"
-                                  onChange={(e) => handleChange(e, index)}
-                                />
-                              </Button>
+                        <Box
+                          sx={{
+                            ml: { xs: 0, sm: "auto" },
+                            flexShrink: 0,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 0.55,
+                            px: 1.15,
+                            py: 0.65,
+                            borderRadius: "10px",
+                            bgcolor:
+                              formData.property_images.length ===
+                              MAX_PROPERTY_IMAGES
+                                ? "#fef3f2"
+                                : "#ecfdf3",
+                            border:
+                              formData.property_images.length ===
+                              MAX_PROPERTY_IMAGES
+                                ? "1px solid #fecdca"
+                                : "1px solid #abefc6",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              color:
+                                formData.property_images.length ===
+                                MAX_PROPERTY_IMAGES
+                                  ? "#b42318"
+                                  : "#067647",
+                              fontSize: 12.5,
+                              fontWeight: 850,
+                              lineHeight: 1,
+                            }}
+                          >
+                            {formData.property_images.length}/
+                            {MAX_PROPERTY_IMAGES}
+                          </Typography>
 
-                              {formData.property_images.length > 1 && (
-                                <Button
-                                  type="button"
-                                  size="small"
-                                  onClick={() => removeImageField(index)}
-                                  sx={{
-                                    minWidth: 36,
-                                    borderRadius: 2,
-                                    color: "#dc2626",
-                                    bgcolor: "#ffffff",
-                                    border: "1px solid #fecaca",
-                                    fontWeight: 600,
-                                    "&:hover": {
-                                      bgcolor: "#fef2f2",
-                                      borderColor: "#fca5a5",
-                                    },
-                                  }}
-                                >
-                                  ×
-                                </Button>
-                              )}
-                            </Stack>
-                          </Box>
-                        ))}
+                          <Typography
+                            sx={{
+                              color:
+                                formData.property_images.length ===
+                                MAX_PROPERTY_IMAGES
+                                  ? "#b42318"
+                                  : "#067647",
+                              fontSize: 11.8,
+                              fontWeight: 700,
+                              lineHeight: 1,
+                            }}
+                          >
+                            selected
+                          </Typography>
+                        </Box>
                       </Stack>
 
-                      <Button
-                        type="button"
-                        onClick={addImageField}
+                      <Box
+                        component="label"
                         sx={{
-                          mt: 1.8,
-                          width: "100%",
-                          py: 1.1,
-                          borderRadius: 2,
-                          textTransform: "none",
-                          fontWeight: 500,
-                          color: "#047857",
-                          bgcolor: "#f0fdf4",
-                          border: "1px dashed #86efac",
+                          minHeight: { xs: 116, sm: 92 },
+                          borderRadius: "14px",
+                          border: "1.5px dashed",
+                          borderColor:
+                            formData.property_images.length >=
+                            MAX_PROPERTY_IMAGES
+                              ? "#d0d5dd"
+                              : "#86d7b4",
+                          bgcolor:
+                            formData.property_images.length >=
+                            MAX_PROPERTY_IMAGES
+                              ? "#f8fafc"
+                              : "#f7fcfa",
+                          display: "flex",
+                          flexDirection: { xs: "column", sm: "row" },
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: { xs: 1.5, sm: 2 },
+                          px: { xs: 2, sm: 2.2 },
+                          py: { xs: 2, sm: 1.7 },
+                          cursor:
+                            formData.property_images.length >=
+                            MAX_PROPERTY_IMAGES
+                              ? "not-allowed"
+                              : "pointer",
+                          transition: "all 0.2s ease",
                           "&:hover": {
-                            bgcolor: "#dcfce7",
+                            bgcolor:
+                              formData.property_images.length >=
+                              MAX_PROPERTY_IMAGES
+                                ? "#f8fafc"
+                                : "#effaf5",
+                            borderColor:
+                              formData.property_images.length >=
+                              MAX_PROPERTY_IMAGES
+                                ? "#d0d5dd"
+                                : "#34b27b",
                           },
                         }}
                       >
-                        + Add another image
-                      </Button>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          spacing={1.4}
+                          sx={{
+                            width: { xs: "100%", sm: "auto" },
+                            minWidth: 0,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 45,
+                              height: 45,
+                              flexShrink: 0,
+                              borderRadius: "13px",
+                              bgcolor:
+                                formData.property_images.length >=
+                                MAX_PROPERTY_IMAGES
+                                  ? "#f2f4f7"
+                                  : "#dcfce7",
+                              color:
+                                formData.property_images.length >=
+                                MAX_PROPERTY_IMAGES
+                                  ? "#98a2b3"
+                                  : "#047857",
+                              display: "grid",
+                              placeItems: "center",
+                            }}
+                          >
+                            <CloudUploadOutlinedIcon sx={{ fontSize: 25 }} />
+                          </Box>
+
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography
+                              sx={{
+                                color:
+                                  formData.property_images.length >=
+                                  MAX_PROPERTY_IMAGES
+                                    ? "#98a2b3"
+                                    : "#344054",
+                                fontSize: 13.8,
+                                fontWeight: 800,
+                              }}
+                            >
+                              {formData.property_images.length >=
+                              MAX_PROPERTY_IMAGES
+                                ? "Maximum image limit reached"
+                                : formData.property_images.length > 0
+                                  ? "Add more images"
+                                  : "Choose property images"}
+                            </Typography>
+
+                            <Typography
+                              sx={{
+                                mt: 0.3,
+                                color: "#98a2b3",
+                                fontSize: 11.8,
+                              }}
+                            >
+                              JPG, PNG or WEBP · Select multiple files
+                            </Typography>
+                          </Box>
+                        </Stack>
+
+                        <Box
+                          sx={{
+                            flexShrink: 0,
+                            width: { xs: "100%", sm: "auto" },
+                            px: 1.8,
+                            py: 0.9,
+                            borderRadius: "10px",
+                            bgcolor:
+                              formData.property_images.length >=
+                              MAX_PROPERTY_IMAGES
+                                ? "#f2f4f7"
+                                : "#047857",
+                            color:
+                              formData.property_images.length >=
+                              MAX_PROPERTY_IMAGES
+                                ? "#98a2b3"
+                                : "#ffffff",
+                            textAlign: "center",
+                            fontSize: 12.5,
+                            fontWeight: 800,
+                            boxShadow:
+                              formData.property_images.length >=
+                              MAX_PROPERTY_IMAGES
+                                ? "none"
+                                : "0 5px 14px rgba(4,120,87,0.18)",
+                          }}
+                        >
+                          Browse Images
+                        </Box>
+
+                        <input
+                          type="file"
+                          hidden
+                          multiple
+                          accept="image/*"
+                          disabled={
+                            formData.property_images.length >=
+                            MAX_PROPERTY_IMAGES
+                          }
+                          onChange={handleImageSelection}
+                        />
+                      </Box>
+
+                      {formData.property_images.length > 0 && (
+                        <>
+                          <Divider sx={{ my: 2 }} />
+
+                          <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                            sx={{ mb: 1.2 }}
+                          >
+                            <Typography
+                              sx={{
+                                color: "#344054",
+                                fontSize: 13,
+                                fontWeight: 800,
+                              }}
+                            >
+                              Selected images
+                            </Typography>
+
+                            <Typography
+                              sx={{
+                                color: "#98a2b3",
+                                fontSize: 11.5,
+                              }}
+                            >
+                              Click × to remove
+                            </Typography>
+                          </Stack>
+
+                          <Box
+                            sx={{
+                              display: "grid",
+                              gridTemplateColumns: {
+                                xs: "repeat(2, minmax(0, 1fr))",
+                                sm: "repeat(3, minmax(0, 1fr))",
+                              },
+                              gap: 1.4,
+                            }}
+                          >
+                            {formData.property_images.map((image, index) => (
+                              <SelectedImagePreview
+                                key={`${image.name}-${image.size}-${image.lastModified}`}
+                                image={image}
+                                index={index}
+                                onRemove={removeImage}
+                              />
+                            ))}
+                          </Box>
+                        </>
+                      )}
                     </Box>
                   </Box>
 
